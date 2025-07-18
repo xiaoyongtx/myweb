@@ -41,8 +41,8 @@ export default function Register() {
 
       // 注册成功，显示确认邮件提示或直接登录
       router.push('/auth/verify-email');
-    } catch (error: any) {
-      setError(error.message || '注册失败，请重试');
+    } catch (error: unknown) {
+      setError((error as Error).message || '注册失败，请重试');
     } finally {
       setLoading(false);
     }

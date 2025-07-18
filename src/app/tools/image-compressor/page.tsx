@@ -155,6 +155,8 @@ export default function ImageCompressor() {
                     src={originalImage} 
                     alt="Original" 
                     className="max-w-full h-auto" 
+                    width={500}
+                    height={300}
                   />
                 </div>
               ) : (
@@ -174,6 +176,8 @@ export default function ImageCompressor() {
                     src={compressedImage} 
                     alt="Compressed" 
                     className="max-w-full h-auto" 
+                    width={500}
+                    height={300}
                   />
                   <div className="mt-2 flex justify-center">
                     <button

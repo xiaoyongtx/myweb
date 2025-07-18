@@ -15,8 +15,8 @@ export default function JsonFormatter() {
       JSON.parse(jsonInput);
       setError('✓ JSON 有效');
       return true;
-    } catch (e: any) {
-      setError('错误: ' + e.message);
+    } catch (e: unknown) {
+      setError('错误: ' + (e as Error).message);
       return false;
     }
   };
@@ -28,8 +28,8 @@ export default function JsonFormatter() {
       const parsed = JSON.parse(jsonInput);
       const indentValue = indent === '\t' ? '\t' : parseInt(indent);
       setJsonOutput(JSON.stringify(parsed, null, indentValue));
-    } catch (e: any) {
-      setError('格式化错误: ' + e.message);
+    } catch (e: unknown) {
+      setError('格式化错误: ' + (e as Error).message);
     }
   };
 
@@ -39,8 +39,8 @@ export default function JsonFormatter() {
     try {
       const parsed = JSON.parse(jsonInput);
       setJsonOutput(JSON.stringify(parsed));
-    } catch (e: any) {
-      setError('压缩错误: ' + e.message);
+    } catch (e: unknown) {
+      setError('压缩错误: ' + (e as Error).message);
     }
   };
 

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -11,24 +10,24 @@ export default function Home() {
           <span className="block text-indigo-600 dark:text-indigo-400">放大商业化</span>
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-          探索《一人企业复利商业化》<br/>
-          持续价值输出、副业项目实战、复利内容产品、AI工具          
+          探索《一人企业复利商业化》<br />
+          持续价值输出、副业项目实战、复利内容产品、AI工具
         </p>
         <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
           <div className="rounded-md shadow">
             <Link
-              href="/articles"
+              href="/tools"
               className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
             >
-              浏览文章
+              工具箱
             </Link>
           </div>
           <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
             <Link
-              href="/tools"
+              href="/about"
               className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 dark:bg-gray-800 dark:text-indigo-400 dark:hover:bg-gray-700"
             >
-              工具箱
+              关于我们
             </Link>
           </div>
         </div>
@@ -53,14 +52,14 @@ export default function Home() {
                 <div className="flex-shrink-0">
                   <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
                     <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">文章发布</h3>
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">实用工具</h3>
                   <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
-                    发布和管理您的文章，分享您的知识和经验
+                    各种实用的在线工具，提高您的工作效率
                   </p>
                 </div>
               </div>
@@ -85,14 +84,14 @@ export default function Home() {
                 <div className="flex-shrink-0">
                   <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
                     <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">实用工具</h3>
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">AI 驱动</h3>
                   <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
-                    各种实用的在线工具，提高您的工作效率
+                    借助AI技术提升效率，实现商业化目标
                   </p>
                 </div>
               </div>

@@ -51,8 +51,8 @@ export default function CodeFormatter() {
         
         setFormattedCode(formattedLines.join('\n'));
       }
-    } catch (e: any) {
-      setError(`格式化错误: ${e.message}`);
+    } catch (e: unknown) {
+      setError(`格式化错误: ${(e as Error).message}`);
       setFormattedCode('');
     }
   };

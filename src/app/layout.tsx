@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "个人网站",
-  description: "一个包含登录注册、文章发布和工具箱功能的个人网站",
+  description: "一个包含登录注册和工具箱功能的个人网站，借助AI提效放大商业化",
 };
 
 export default function RootLayout({

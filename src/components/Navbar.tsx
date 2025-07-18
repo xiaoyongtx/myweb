@@ -14,7 +14,6 @@ const Navbar = () => {
 
   const navItems = [
     { name: '首页', path: '/' },
-    { name: '文章', path: '/articles' },
     { name: '工具箱', path: '/tools' },
     { name: '关于', path: '/about' },
   ];

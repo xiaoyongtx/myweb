@@ -30,8 +30,8 @@ export default function Login() {
 
       router.push('/');
       router.refresh();
-    } catch (error: any) {
-      setError(error.message || '登录失败，请重试');
+    } catch (error: unknown) {
+      setError((error as Error).message || '登录失败，请重试');
     } finally {
       setLoading(false);
     }
