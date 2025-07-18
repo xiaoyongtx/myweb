@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ImageCompressor() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -27,7 +28,12 @@ export default function ImageCompressor() {
     
     setIsCompressing(true);
     
-    const img = new Image();
+    // Use the browser's Image constructor with a check for window to avoid SSR issues
+    const img = typeof window !== 'undefined' ? new window.Image() : null;
+    if (!img) {
+      setIsCompressing(false);
+      return;
+    }
     img.src = originalImage;
     
     img.onload = () => {
@@ -151,12 +157,13 @@ export default function ImageCompressor() {
               </h3>
               {originalImage ? (
                 <div className="border border-gray-200 dark:border-gray-700 rounded-md p-2">
-                  <img 
+                  <Image 
                     src={originalImage} 
                     alt="Original" 
                     className="max-w-full h-auto" 
                     width={500}
                     height={300}
+                    unoptimized
                   />
                 </div>
               ) : (
@@ -172,12 +179,13 @@ export default function ImageCompressor() {
               </h3>
               {compressedImage ? (
                 <div className="border border-gray-200 dark:border-gray-700 rounded-md p-2">
-                  <img 
+                  <Image 
                     src={compressedImage} 
                     alt="Compressed" 
                     className="max-w-full h-auto" 
                     width={500}
                     height={300}
+                    unoptimized
                   />
                   <div className="mt-2 flex justify-center">
                     <button
