@@ -1,117 +1,121 @@
-# 个人网站
+# 个人网站项目
 
-这是一个使用Next.js、Tailwind CSS和Supabase构建的个人网站，包含登录注册、文章发布和工具箱功能。
+一个基于Next.js和Supabase构建的个人网站，包含用户认证、个人资料管理和实用工具集合。
 
 ## 功能特点
 
-- **用户认证**：注册、登录和个人资料管理
-- **文章系统**：浏览和阅读文章
-- **工具箱**：各种实用的在线工具
-- **响应式设计**：适配各种设备尺寸
-- **暗色模式**：支持明亮和暗黑主题切换
+- 用户认证（注册、登录、退出）
+- 个人资料管理（头像上传、用户名修改、密码更改）
+- 实用工具集合（图片压缩、代码格式化、颜色选择器、JSON格式化）
+- 响应式设计，支持移动端和桌面端
 
 ## 技术栈
 
-- **前端框架**：Next.js 15.x (React 19)
-- **样式**：Tailwind CSS 4.x
-- **后端服务**：Supabase (认证、数据库、存储)
-- **部署**：Vercel
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+- **前端框架**: Next.js 14 (App Router)
+- **样式**: TailwindCSS
+- **认证与数据库**: Supabase
+- **部署**: Vercel
 
 ## 开始使用
 
 ### 前提条件
 
-- Node.js 18.x 或更高版本
+- Node.js 18+
 - npm 或 yarn
-- Supabase 账户
+- Supabase账户
 
 ### 安装步骤
 
 1. 克隆仓库
-
 ```bash
-git clone https://github.com/yourusername/personal-website.git
-cd personal-website
+git clone https://github.com/yourusername/myweb.git
+cd myweb
 ```
 
 2. 安装依赖
-
 ```bash
 npm install
 # 或
 yarn install
 ```
 
-3. 配置环境变量
-
-创建一个`.env.local`文件，并添加以下内容：
-
+3. 设置环境变量
+创建`.env.local`文件，添加以下内容：
 ```
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-4. 启动开发服务器
+4. 设置Supabase
+- 在Supabase控制台创建新项目
+- 运行`supabase/migrations`中的SQL脚本来设置数据库表和存储桶
 
+5. 启动开发服务器
 ```bash
 npm run dev
 # 或
 yarn dev
 ```
 
-5. 打开浏览器访问 [http://localhost:3000](http://localhost:3000)
-
-这个项目使用 [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) 自动优化和加载 [Geist](https://vercel.com/font)，这是Vercel的一个新字体系列。
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## 项目结构
-
-```
-/
-├── public/             # 静态资源
-├── src/
-│   ├── app/            # 应用路由和页面
-│   │   ├── about/      # 关于页面
-│   │   ├── articles/   # 文章相关页面
-│   │   ├── auth/       # 认证相关页面
-│   │   ├── tools/      # 工具箱相关页面
-│   │   ├── globals.css # 全局样式
-│   │   ├── layout.tsx  # 根布局组件
-│   │   └── page.tsx    # 首页
-│   ├── components/     # 可复用组件
-│   └── lib/            # 工具函数和库
-├── .env.local          # 环境变量
-├── next.config.ts      # Next.js配置
-├── package.json        # 项目依赖
-└── README.md           # 项目说明
+6. 构建生产版本
+```bash
+npm run build
+# 或
+yarn build
 ```
 
 ## 部署
 
-### Vercel部署
+项目可以轻松部署到Vercel：
 
-最简单的部署Next.js应用的方法是使用Next.js创建者提供的[Vercel平台](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)。
-
-1. 在Vercel上导入你的GitHub仓库
-2. 添加环境变量
+1. 在Vercel上导入GitHub仓库
+2. 设置环境变量
 3. 部署
 
-查看[Next.js部署文档](https://nextjs.org/docs/app/building-your-application/deploying)了解更多详情。
+## 项目结构
+
+```
+myweb/
+├── public/             # 静态资源
+├── src/
+│   ├── app/            # 应用页面
+│   │   ├── auth/       # 认证相关页面
+│   │   ├── profile/    # 个人资料页面
+│   │   ├── tools/      # 工具页面
+│   │   └── ...
+│   ├── components/     # 可复用组件
+│   ├── contexts/       # React上下文
+│   ├── lib/           # 工具函数和库
+│   └── ...
+├── supabase/          # Supabase配置和迁移
+└── ...
+```
+
+## 功能说明
+
+### 用户认证
+
+- 使用邮箱和密码注册
+- 登录现有账户
+- 安全退出
+
+### 个人资料管理
+
+- 上传和更改头像
+- 修改用户名
+- 更改密码
+
+### 工具集合
+
+- **图片压缩**: 减小图片文件大小
+- **代码格式化**: 格式化各种编程语言的代码
+- **颜色选择器**: 选择和转换颜色格式
+- **JSON格式化**: 格式化和验证JSON数据
 
 ## 贡献
 
-欢迎贡献代码、报告问题或提出改进建议。
+欢迎提交问题和拉取请求！
 
 ## 许可证
 
-[MIT](LICENSE)
+MIT
