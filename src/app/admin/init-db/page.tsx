@@ -1,31 +1,40 @@
 'use client';
 
 import { useState } from 'react';
-import { initializeSupabaseSchema } from '@/lib/initSupabase';
+import { createUserProfile } from '@/lib/initSupabase';
+import { useUser } from '@/contexts/UserContext';
 import Link from 'next/link';
 
 export default function InitDbPage() {
+  const { user, refreshProfile } = useUser();
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
-  const handleInitDb = async () => {
+  const handleCreateProfile = async () => {
+    if (!user) {
+      setStatus('error');
+      setMessage('您需要先登录才能创建个人资料');
+      return;
+    }
+    
     setStatus('loading');
-    setMessage('正在初始化数据库...');
+    setMessage('正在创建个人资料...');
     
     try {
-      const result = await initializeSupabaseSchema();
+      const profile = await createUserProfile(user.id);
       
-      if (result) {
+      if (profile) {
+        await refreshProfile();
         setStatus('success');
-        setMessage('数据库初始化成功！现在您可以使用个人资料功能了。');
+        setMessage('个人资料创建成功！现在您可以使用个人资料功能了。');
       } else {
         setStatus('error');
-        setMessage('数据库初始化失败，请查看控制台获取详细错误信息。');
+        setMessage('创建个人资料失败，请查看控制台获取详细错误信息。');
       }
     } catch (error) {
-      console.error('Error initializing database:', error);
+      console.error('Error creating profile:', error);
       setStatus('error');
-      setMessage(`数据库初始化出错: ${error instanceof Error ? error.message : '未知错误'}`);
+      setMessage(`创建个人资料出错: ${error instanceof Error ? error.message : '未知错误'}`);
     }
   };
 
@@ -42,10 +51,10 @@ export default function InitDbPage() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          数据库初始化
+          创建个人资料
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
-          初始化Supabase数据库架构，创建必要的表和存储桶
+          为您的账户创建个人资料
         </p>
       </div>
 
@@ -53,16 +62,16 @@ export default function InitDbPage() {
         <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg p-6">
           <div className="text-center">
             <p className="mb-6 text-gray-600 dark:text-gray-400">
-              如果您在使用个人资料功能时遇到问题，可能是因为数据库架构尚未初始化。
-              点击下面的按钮初始化数据库架构。
+              如果您在使用个人资料功能时遇到问题，可能是因为您的个人资料尚未创建。
+              点击下面的按钮创建个人资料。
             </p>
             
             {status === 'idle' && (
               <button
-                onClick={handleInitDb}
+                onClick={handleCreateProfile}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                初始化数据库
+                创建个人资料
               </button>
             )}
             
@@ -97,7 +106,7 @@ export default function InitDbPage() {
                 </svg>
                 <p className="text-lg font-medium">{message}</p>
                 <button
-                  onClick={handleInitDb}
+                  onClick={handleCreateProfile}
                   className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                 >
                   重试
@@ -110,7 +119,7 @@ export default function InitDbPage() {
         <div className="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg p-6">
           <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">手动初始化说明</h2>
           <p className="mb-4 text-gray-600 dark:text-gray-400">
-            如果自动初始化失败，您可以在Supabase控制台中手动执行以下SQL脚本：
+            如果自动创建个人资料失败，您需要在Supabase控制台中手动执行以下SQL脚本：
           </p>
           <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-auto">
             <pre className="text-sm text-gray-800 dark:text-gray-300">
@@ -144,7 +153,12 @@ CREATE POLICY "Users can insert own profile"
 -- 创建存储桶
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('avatars', 'avatars', true)
-ON CONFLICT DO NOTHING;`}
+ON CONFLICT DO NOTHING;
+
+-- 为当前用户创建个人资料
+INSERT INTO profiles (id, username, avatar_url, updated_at)
+VALUES ('${user?.id || '您的用户ID'}', NULL, NULL, now())
+ON CONFLICT (id) DO NOTHING;`}
             </pre>
           </div>
         </div>

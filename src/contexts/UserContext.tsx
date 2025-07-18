@@ -92,6 +92,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log('Fetching profile for user:', userId);
       
+      // 尝试获取个人资料
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -100,13 +101,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error('Error fetching profile:', error);
-        // 如果找不到profile，创建一个
-        if (error.code === 'PGRST116') {
-          const newProfile = await createUserProfile(userId);
-          if (newProfile) {
-            setProfile(newProfile);
-          }
-        }
+        // 如果是因为表不存在或记录不存在，不要自动创建
+        // 让用户手动创建个人资料
       } else {
         console.log('Profile fetched successfully:', data);
         setProfile(data);
