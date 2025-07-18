@@ -151,12 +151,55 @@ export default function ProfilePage() {
     }
   };
 
-  // 如果正在加载或用户未登录，显示加载状态
-  if (loading || !user) {
+  // 添加调试信息
+  console.log('Profile page state:', { loading, user, profile });
+
+  // 如果正在加载，显示加载状态
+  if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+          <p className="text-gray-500 dark:text-gray-400">加载中...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // 如果用户未登录，显示提示
+  if (!user) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">未登录</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">您需要登录才能访问个人资料页面</p>
+          <Link
+            href="/auth/login"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            前往登录
+          </Link>
+        </div>
+      </div>
+    );
+  }
+  
+  // 如果用户已登录但没有个人资料，可能是数据库未初始化
+  if (user && !profile) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">数据库未初始化</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
+            无法加载个人资料，可能是因为数据库架构尚未初始化。
+            请点击下面的按钮初始化数据库。
+          </p>
+          <Link
+            href="/admin/init-db"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            初始化数据库
+          </Link>
         </div>
       </div>
     );
