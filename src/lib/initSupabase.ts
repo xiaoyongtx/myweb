@@ -19,6 +19,30 @@ export async function createUserProfile(userId: string) {
     
     if (error) {
       console.error('Error creating profile:', error);
+      
+      // 如果是因为表不存在，尝试创建表
+      if (error.code === '42P01') { // 表不存在的错误代码
+        await createProfilesTable();
+        
+        // 再次尝试插入
+        const retryResult = await supabase
+          .from('profiles')
+          .upsert({
+            id: userId,
+            username: null,
+            avatar_url: null,
+            updated_at: new Date().toISOString()
+          })
+          .select();
+          
+        if (retryResult.error) {
+          console.error('Error creating profile after table creation:', retryResult.error);
+          return null;
+        }
+        
+        return retryResult.data[0];
+      }
+      
       return null;
     }
     
@@ -54,5 +78,28 @@ export async function checkUserProfile(userId: string) {
   } catch (error) {
     console.error('Error in checkUserProfile:', error);
     return null;
+  }
+}
+
+// 创建profiles表
+async function createProfilesTable() {
+  const supabase = createSupabaseClient();
+  console.log('Creating profiles table...');
+  
+  try {
+    // 使用SQL创建表
+    // 注意：这需要数据库管理员权限，普通用户可能无法执行
+    const { error } = await supabase.rpc('create_profiles_table');
+    
+    if (error) {
+      console.error('Error creating profiles table:', error);
+      return false;
+    }
+    
+    console.log('Profiles table created successfully');
+    return true;
+  } catch (error) {
+    console.error('Error in createProfilesTable:', error);
+    return false;
   }
 }

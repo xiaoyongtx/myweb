@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { createSupabaseClient } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
-import { initializeSupabaseSchema, createUserProfile } from '@/lib/initSupabase';
+import { createUserProfile } from '@/lib/initSupabase';
 
 type UserContextType = {
   user: User | null;
@@ -41,10 +41,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const getSession = async () => {
       try {
         console.log('Fetching session...');
-        
-        // 初始化Supabase架构
-        const initialized = await initializeSupabaseSchema();
-        console.log('Supabase schema initialized:', initialized);
         
         const { data: { session } } = await supabase.auth.getSession();
         console.log('Session fetched:', session ? 'Found' : 'Not found');
