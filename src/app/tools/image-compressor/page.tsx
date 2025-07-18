@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function ImageCompressor() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -157,13 +156,12 @@ export default function ImageCompressor() {
               </h3>
               {originalImage ? (
                 <div className="border border-gray-200 dark:border-gray-700 rounded-md p-2">
-                  <Image 
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
                     src={originalImage} 
                     alt="Original" 
                     className="max-w-full h-auto" 
-                    width={500}
-                    height={300}
-                    unoptimized
+                    style={{ maxHeight: '300px', objectFit: 'contain' }}
                   />
                 </div>
               ) : (
@@ -179,13 +177,12 @@ export default function ImageCompressor() {
               </h3>
               {compressedImage ? (
                 <div className="border border-gray-200 dark:border-gray-700 rounded-md p-2">
-                  <Image 
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
                     src={compressedImage} 
                     alt="Compressed" 
                     className="max-w-full h-auto" 
-                    width={500}
-                    height={300}
-                    unoptimized
+                    style={{ maxHeight: '300px', objectFit: 'contain' }}
                   />
                   <div className="mt-2 flex justify-center">
                     <button
