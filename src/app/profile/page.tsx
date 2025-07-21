@@ -191,14 +191,22 @@ export default function ProfilePage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">需要创建个人资料</h2>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
-            您已成功登录，但尚未创建个人资料。请点击下面的按钮创建个人资料。
+            您已成功登录，但尚未创建个人资料。请选择以下方式之一创建个人资料。
           </p>
-          <Link
-            href="/admin/init-db"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-          >
-            创建个人资料
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/admin/manual-setup"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            >
+              简易设置（推荐）
+            </Link>
+            <Link
+              href="/admin/init-db"
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              标准设置
+            </Link>
+          </div>
         </div>
       </div>
     );

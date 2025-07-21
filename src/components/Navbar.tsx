@@ -61,10 +61,7 @@ const Navbar = () => {
     return '?';
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    setIsProfileMenuOpen(false);
-  };
+  // 不再需要handleSignOut函数，因为我们现在使用专门的退出页面
 
   return (
     <nav className="bg-white shadow-md dark:bg-gray-900">
@@ -130,12 +127,13 @@ const Navbar = () => {
                     >
                       个人资料
                     </Link>
-                    <button
-                      onClick={handleSignOut}
+                    <Link
+                      href="/auth/simple-logout"
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setIsProfileMenuOpen(false)}
                     >
                       退出登录
-                    </button>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -216,12 +214,12 @@ const Navbar = () => {
                 >
                   个人资料
                 </Link>
-                <button
-                  onClick={handleSignOut}
+                <Link
+                  href="/auth/simple-logout"
                   className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white text-base font-medium"
                 >
                   退出登录
-                </button>
+                </Link>
               </>
             ) : (
               <Link
