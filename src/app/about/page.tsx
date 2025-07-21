@@ -15,7 +15,7 @@ export default function About() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             个人简介
           </h2>
-          
+
           <div className="space-y-4">
             <div className="flex items-start">
               <div className="flex-shrink-0 h-5 w-5 text-indigo-500 dark:text-indigo-400 mt-1">
@@ -27,7 +27,7 @@ export default function About() {
                 <span className="font-medium">我是小勇同学</span>，老家江西，现居郑州
               </p>
             </div>
-            
+
             <div className="flex items-start">
               <div className="flex-shrink-0 h-5 w-5 text-indigo-500 dark:text-indigo-400 mt-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -38,7 +38,7 @@ export default function About() {
                 90后奶爸，资深程序员。在国企上班，下班搞副业
               </p>
             </div>
-            
+
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">副业经历</h3>
               <ul className="space-y-3 pl-5">
@@ -56,7 +56,7 @@ export default function About() {
                 </li>
               </ul>
             </div>
-            
+
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">正在做的事</h3>
               <div className="flex flex-wrap gap-2">
@@ -65,12 +65,12 @@ export default function About() {
                 <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">AI编程</span>
               </div>
             </div>
-            
+
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">联系方式</h3>
               <div className="flex items-center">
                 <svg className="h-5 w-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
                 </svg>
                 <span className="text-gray-600 dark:text-gray-300">微信号：751825267</span>
               </div>
@@ -96,7 +96,7 @@ export default function About() {
           </p>
         </section>
 
-        
+
       </div>
     </div>
   );
