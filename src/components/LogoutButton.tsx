@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface LogoutButtonProps {
   className?: string;
@@ -14,7 +13,6 @@ export default function LogoutButton({
   children = '退出登录',
   onLogout
 }: LogoutButtonProps) {
-  const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {

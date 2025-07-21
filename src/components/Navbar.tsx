@@ -12,7 +12,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
-  const { user, profile, signOut } = useUser();
+  const { user, profile } = useUser();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -50,7 +50,7 @@ const Navbar = () => {
         // 检查URL是否有效
         new URL(profile.avatar_url);
         return profile.avatar_url;
-      } catch (e) {
+      } catch {
         console.error('Invalid avatar URL:', profile.avatar_url);
         return null;
       }

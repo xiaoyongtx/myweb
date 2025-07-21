@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const { user, profile, refreshProfile, loading } = useUser();
@@ -12,7 +13,6 @@ export default function ProfilePage() {
   const [username, setUsername] = useState('');
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -139,7 +139,6 @@ export default function ProfilePage() {
       
       if (error) throw error;
       
-      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setMessage({ type: 'success', text: '密码已更新' });
@@ -283,10 +282,13 @@ export default function ProfilePage() {
                     onClick={triggerFileInput}
                   >
                     {avatarPreview ? (
-                      <img
+                      <Image
                         src={avatarPreview}
                         alt="头像预览"
                         className="h-full w-full object-cover"
+                        width={96}
+                        height={96}
+                        unoptimized
                       />
                     ) : (
                       <div className="text-3xl font-bold text-gray-400 dark:text-gray-500">

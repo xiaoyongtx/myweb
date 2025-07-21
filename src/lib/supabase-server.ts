@@ -15,14 +15,15 @@ export async function createSupabaseServerClient() {
         },
         set(name: string, value: string, options: Record<string, unknown>) {
           try {
-            cookieStore.set(name, value, options as any);
+            cookieStore.set({ name, value, ...options as Record<string, unknown> });
           } catch (error) {
             console.error('Error setting cookie:', error);
           }
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         remove(name: string, options: Record<string, unknown>) {
           try {
-            cookieStore.delete(name, options as any);
+            cookieStore.delete(name);
           } catch (error) {
             console.error('Error removing cookie:', error);
           }
