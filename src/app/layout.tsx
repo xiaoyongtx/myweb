@@ -5,7 +5,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { UserProvider } from "@/contexts/UserContext";
-import AuthDebug from "@/components/AuthDebug";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,12 +37,6 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          {process.env.NODE_ENV !== 'production' && (
-            <div id="debug-container">
-              {/* @ts-expect-error Async Server Component */}
-              <AuthDebug />
-            </div>
-          )}
         </UserProvider>
       </body>
     </html>

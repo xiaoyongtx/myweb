@@ -45,9 +45,17 @@ const Navbar = () => {
   // 获取用户头像或生成默认头像
   const getAvatarUrl = () => {
     if (profile?.avatar_url) {
-      return profile.avatar_url;
+      // 确保URL是有效的
+      try {
+        // 检查URL是否有效
+        new URL(profile.avatar_url);
+        return profile.avatar_url;
+      } catch (e) {
+        console.error('Invalid avatar URL:', profile.avatar_url);
+        return null;
+      }
     }
-    // 如果没有头像，使用用户邮箱的第一个字符作为默认头像
+    // 如果没有头像，返回null
     return null;
   };
 
@@ -106,6 +114,7 @@ const Navbar = () => {
                       width={32}
                       height={32}
                       className="h-8 w-8 rounded-full object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
