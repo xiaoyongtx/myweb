@@ -40,18 +40,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     // 获取当前会话
     const getSession = async () => {
       try {
-        console.log('Fetching session...');
-        
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('Session fetched:', session ? 'Found' : 'Not found');
-        
         setUser(session?.user || null);
         
         if (session?.user) {
-          console.log('User found, fetching profile...');
           await fetchProfile(session.user.id);
         } else {
-          console.log('No user found in session');
           setLoading(false);
         }
       } catch (error) {
@@ -65,14 +59,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     // 监听认证状态变化
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event);
         setUser(session?.user || null);
         
         if (session?.user) {
-          console.log('User found in auth change, fetching profile...');
           await fetchProfile(session.user.id);
         } else {
-          console.log('No user found in auth change');
           setProfile(null);
           setLoading(false);
         }
@@ -86,8 +77,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchProfile = async (userId: string) => {
     try {
-      console.log('Fetching profile for user:', userId);
-      
       // 尝试获取个人资料
       const { data, error } = await supabase
         .from('profiles')
@@ -100,7 +89,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         // 如果是因为表不存在或记录不存在，不要自动创建
         // 让用户手动创建个人资料
       } else {
-        console.log('Profile fetched successfully:', data);
         setProfile(data);
       }
     } catch (error) {
@@ -117,9 +105,36 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
+    try {
+      // 1. 调用Supabase API退出
+      await supabase.auth.signOut();
+      
+      // 2. 清除状态
+      setUser(null);
+      setProfile(null);
+      
+      // 3. 清除本地存储
+      if (typeof window !== 'undefined') {
+        // 清除localStorage中的Supabase相关项
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
+        
+        // 清除sessionStorage中的Supabase相关项
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+            sessionStorage.removeItem(key);
+          }
+        });
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error signing out:', error);
+      return false;
+    }
   };
 
   return (

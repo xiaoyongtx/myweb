@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@/contexts/UserContext';
+import LogoutButton from './LogoutButton';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -127,13 +128,12 @@ const Navbar = () => {
                     >
                       个人资料
                     </Link>
-                    <Link
-                      href="/auth/simple-logout"
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsProfileMenuOpen(false)}
+                    <LogoutButton
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 bg-transparent"
+                      onLogout={() => setIsProfileMenuOpen(false)}
                     >
                       退出登录
-                    </Link>
+                    </LogoutButton>
                   </div>
                 )}
               </div>
@@ -214,12 +214,11 @@ const Navbar = () => {
                 >
                   个人资料
                 </Link>
-                <Link
-                  href="/auth/simple-logout"
-                  className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white text-base font-medium"
+                <LogoutButton
+                  className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white text-base font-medium bg-transparent"
                 >
                   退出登录
-                </Link>
+                </LogoutButton>
               </>
             ) : (
               <Link
