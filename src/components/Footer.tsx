@@ -30,7 +30,7 @@ const Footer = () => {
           </div>
         </nav>
         <p className="mt-8 text-center text-base text-gray-400">
-          &copy; {new Date().getFullYear()} 个人网站. 保留所有权利.
+          &copy; 2025 小勇同学. 保留所有权利.
         </p>
       </div>
     </footer>
