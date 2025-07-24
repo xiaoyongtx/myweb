@@ -11,9 +11,14 @@ const IP_APIS = {
   ipdata: (ip: string) => `https://api.ipdata.co/${ip}?api-key=test`
 };
 
+// 添加缓存以提高性能
+const CACHE_DURATION = 3600; // 1小时，单位：秒
+const ipCache = new Map<string, { data: any, timestamp: number }>();
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const ip = searchParams.get('ip');
+  const noCache = searchParams.get('no_cache') === 'true';
   
   try {
     // 如果没有提供IP，先获取用户的IP
@@ -31,20 +36,29 @@ export async function GET(request: Request) {
       } else {
         // 如果请求头中没有IP信息，尝试使用API获取
         try {
+          // 添加超时控制
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          
           const ipResponse = await fetch(IP_APIS.ipify, { 
             cache: 'no-store',
-            headers: { 'Accept': 'application/json' }
-          });
+            headers: { 'Accept': 'application/json' },
+            signal: controller.signal
+          }).finally(() => clearTimeout(timeoutId));
           
           if (ipResponse.ok) {
             const ipData = await ipResponse.json();
             ipToLookup = ipData.ip;
           } else {
             // 尝试备用API
+            const backupController = new AbortController();
+            const backupTimeoutId = setTimeout(() => backupController.abort(), 5000);
+            
             const ipInfoResponse = await fetch(IP_APIS.ipinfo, { 
               cache: 'no-store',
-              headers: { 'Accept': 'application/json' }
-            });
+              headers: { 'Accept': 'application/json' },
+              signal: backupController.signal
+            }).finally(() => clearTimeout(backupTimeoutId));
             
             if (ipInfoResponse.ok) {
               const ipInfoData = await ipInfoResponse.json();
@@ -68,16 +82,28 @@ export async function GET(request: Request) {
       );
     }
     
+    // 检查缓存
+    if (!noCache && ipCache.has(ipToLookup)) {
+      const cachedData = ipCache.get(ipToLookup);
+      if (cachedData && (Date.now() - cachedData.timestamp) / 1000 < CACHE_DURATION) {
+        return NextResponse.json(cachedData.data);
+      }
+    }
+    
     // 获取IP详细信息
     let ipDetails = null;
     let error = null;
     
     // 尝试第一个API
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const geoResponse = await fetch(IP_APIS.ipapi(ipToLookup), { 
         cache: 'no-store',
-        headers: { 'Accept': 'application/json' }
-      });
+        headers: { 'Accept': 'application/json' },
+        signal: controller.signal
+      }).finally(() => clearTimeout(timeoutId));
       
       if (geoResponse.ok) {
         const data = await geoResponse.json();
@@ -105,10 +131,14 @@ export async function GET(request: Request) {
     // 如果第一个API失败，尝试第二个API
     if (!ipDetails) {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const geoResponse = await fetch(IP_APIS.ipdata(ipToLookup), { 
           cache: 'no-store',
-          headers: { 'Accept': 'application/json' }
-        });
+          headers: { 'Accept': 'application/json' },
+          signal: controller.signal
+        }).finally(() => clearTimeout(timeoutId));
         
         if (geoResponse.ok) {
           const data = await geoResponse.json();
@@ -136,7 +166,7 @@ export async function GET(request: Request) {
     // 如果两个API都失败了
     if (!ipDetails) {
       // 至少返回IP地址
-      return NextResponse.json({
+      const fallbackResponse = {
         ip: ipToLookup,
         country: '未知',
         region: '未知',
@@ -144,7 +174,25 @@ export async function GET(request: Request) {
         isp: '未知',
         timezone: '未知',
         error: error || '无法获取IP详细信息'
-      });
+      };
+      
+      return NextResponse.json(fallbackResponse);
+    }
+    
+    // 保存到缓存
+    ipCache.set(ipToLookup, {
+      data: ipDetails,
+      timestamp: Date.now()
+    });
+    
+    // 清理过期缓存
+    if (ipCache.size > 100) { // 限制缓存大小
+      const now = Date.now();
+      for (const [key, value] of ipCache.entries()) {
+        if ((now - value.timestamp) / 1000 > CACHE_DURATION) {
+          ipCache.delete(key);
+        }
+      }
     }
     
     return NextResponse.json(ipDetails);

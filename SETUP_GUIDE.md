@@ -1,64 +1,119 @@
-# Supabase配置指南
+# 项目设置指南
 
-本指南将帮助你正确配置Supabase，以确保个人资料功能和其他Supabase相关功能正常工作。
+本指南将帮助您设置和运行个人网站项目。
 
-## 1. Supabase项目设置
+## 前提条件
 
-1. 登录到你的 [Supabase控制台](https://app.supabase.com)
-2. 点击"New Project"
-3. 填写项目名称、选择地区、设置数据库密码
-4. 等待项目创建完成（可能需要几分钟）
+- Node.js 18+
+- npm 或 yarn
+- Supabase账户
 
-## 2. 数据库表和存储桶设置
+## 步骤 1: 安装依赖
 
-### 方法1：使用网页界面（推荐）
+在项目根目录下运行以下命令安装所有依赖：
 
-1. 登录到你的网站
-2. 访问 `/admin/init-db` 路径
-3. 点击"创建个人资料"按钮
-4. 如果成功，你将看到成功消息，然后可以点击"前往个人资料页面"
+```bash
+npm install
+# 或
+yarn install
+```
 
-### 方法2：在Supabase控制台中手动执行SQL
+## 步骤 2: 设置Supabase
 
-1. 登录到你的 [Supabase控制台](https://app.supabase.com)
-2. 选择你的项目
-3. 点击左侧菜单中的"SQL编辑器"
-4. 创建一个新的查询
-5. 复制并粘贴 `supabase/migrations/20250718_create_profiles_table.sql` 文件中的SQL语句
-6. 执行SQL语句
+1. 访问 [Supabase](https://supabase.com/) 并创建一个账户
+2. 创建一个新项目
+3. 在项目设置中找到API URL和anon key
+4. 在项目的SQL编辑器中运行以下SQL脚本来创建必要的表：
 
-## 3. 环境变量配置
+```sql
+-- 创建profiles表
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  username TEXT UNIQUE,
+  avatar_url TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-在`.env.local`文件中设置以下环境变量：
+-- 创建RLS策略
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- 允许已认证用户读取所有个人资料
+CREATE POLICY "允许已认证用户读取所有个人资料" ON profiles
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+-- 允许用户更新自己的个人资料
+CREATE POLICY "允许用户更新自己的个人资料" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+-- 允许用户插入自己的个人资料
+CREATE POLICY "允许用户插入自己的个人资料" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+```
+
+5. 在Supabase中设置存储桶：
+   - 导航到"Storage"部分
+   - 创建一个名为"avatars"的新存储桶
+   - 设置适当的访问权限
+
+## 步骤 3: 设置环境变量
+
+1. 在项目根目录创建`.env.local`文件
+2. 添加以下环境变量：
+
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-你可以从Supabase项目的设置页面获取这些值。
+将`your_supabase_url`和`your_supabase_anon_key`替换为您在Supabase项目设置中找到的值。
 
-## 4. 验证Supabase连接
+## 步骤 4: 启动开发服务器
 
-1. 确保你的环境变量已正确设置
-2. 启动开发服务器：`npm run dev`
-3. 访问网站主页
-4. 检查浏览器控制台是否有任何Supabase连接错误
+运行以下命令启动开发服务器：
 
-## 5. 常见问题解决
+```bash
+npm run dev
+# 或
+yarn dev
+```
 
-### 问题1：无法访问Supabase API
-- 检查环境变量是否正确设置
-- 确保没有拼写错误
-- 确认Supabase项目已正确创建
+应用将在 [http://localhost:3000](http://localhost:3000) 上运行。
 
-### 问题2：数据库表不存在
-- 按照上述步骤手动执行SQL创建表
-- 检查SQL语句是否有错误
-- 确保有网络连接
+## 步骤 5: 构建生产版本
 
-### 问题3：无法上传头像
-- 确认已创建avatars存储桶
-- 检查存储策略是否允许上传
-- 确认用户已登录
+当您准备部署时，运行以下命令构建生产版本：
 
-如果你仍然遇到问题，请检查浏览器控制台中的错误消息，并参考Supabase官方文档。
+```bash
+npm run build
+# 或
+yarn build
+```
+
+## 部署到Vercel
+
+1. 将代码推送到GitHub仓库
+2. 在Vercel上创建账户并导入GitHub仓库
+3. 设置环境变量（与`.env.local`文件中相同）
+4. 部署应用
+
+## 故障排除
+
+### 常见问题
+
+1. **Supabase认证问题**
+   - 确保环境变量正确设置
+   - 检查Supabase项目的认证设置
+
+2. **构建错误**
+   - 确保所有依赖都已安装
+   - 检查控制台错误信息
+
+3. **动态导入错误**
+   - 确保在客户端组件中使用`ssr: false`选项
+   - 使用NavbarWrapper组件作为中间层
+
+### 联系支持
+
+如有任何问题，请通过以下方式联系：
+
+- 微信: 751825267

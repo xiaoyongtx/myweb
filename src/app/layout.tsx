@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import dynamic from 'next/dynamic';
+import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
 import { UserProvider } from "@/contexts/UserContext";
-
-// 使用动态导入，禁用SSR以避免水合错误
-const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <UserProvider>
-          <Navbar />
+          <NavbarWrapper />
           <main className="flex-grow">
             {children}
           </main>
