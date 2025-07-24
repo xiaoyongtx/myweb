@@ -21,25 +21,28 @@ export default function LogoutButton({
     setIsLoggingOut(true);
     
     try {
-      // 1. 清除所有localStorage中的Supabase相关项
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('sb-')) {
-          localStorage.removeItem(key);
-        }
-      });
-      
-      // 2. 清除所有sessionStorage中的Supabase相关项
-      Object.keys(sessionStorage).forEach(key => {
-        if (key.startsWith('sb-')) {
-          sessionStorage.removeItem(key);
-        }
-      });
-      
-      // 3. 清除所有cookie
-      document.cookie.split(';').forEach(cookie => {
-        const [name] = cookie.trim().split('=');
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-      });
+      // 确保只在客户端执行
+      if (typeof window !== 'undefined') {
+        // 1. 清除所有localStorage中的Supabase相关项
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
+        
+        // 2. 清除所有sessionStorage中的Supabase相关项
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+            sessionStorage.removeItem(key);
+          }
+        });
+        
+        // 3. 清除所有cookie
+        document.cookie.split(';').forEach(cookie => {
+          const [name] = cookie.trim().split('=');
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        });
+      }
       
       // 4. 调用可选的onLogout回调
       if (onLogout) {
@@ -47,11 +50,15 @@ export default function LogoutButton({
       }
       
       // 5. 强制刷新页面并重定向到首页
-      window.location.href = '/';
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     } catch (error) {
       console.error('Error during logout:', error);
       // 即使出错也重定向到首页
-      window.location.href = '/';
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     } finally {
       setIsLoggingOut(false);
     }

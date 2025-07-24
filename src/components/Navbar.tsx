@@ -46,14 +46,18 @@ const Navbar = () => {
   const getAvatarUrl = () => {
     if (profile?.avatar_url) {
       // 确保URL是有效的
-      try {
-        // 检查URL是否有效
-        new URL(profile.avatar_url);
-        return profile.avatar_url;
-      } catch {
-        console.error('Invalid avatar URL:', profile.avatar_url);
-        return null;
+      if (typeof window !== 'undefined') {
+        try {
+          // 检查URL是否有效
+          new URL(profile.avatar_url);
+          return profile.avatar_url;
+        } catch {
+          console.error('Invalid avatar URL:', profile.avatar_url);
+          return null;
+        }
       }
+      // 在服务器端，直接返回URL而不验证
+      return profile.avatar_url;
     }
     // 如果没有头像，返回null
     return null;
