@@ -22,12 +22,15 @@ export default function IPLookup() {
 
   // 获取用户的公网IP信息
   const fetchIPInfo = async (ip?: string) => {
+    console.log('开始查询IP:', ip || '当前用户IP'); // 调试信息
     setLoading(true);
     setError('');
     
     try {
-      // 使用我们的API路由
-      const url = ip ? `/api/ip-lookup?ip=${encodeURIComponent(ip)}` : '/api/ip-lookup';
+      // 使用我们的API路由，添加时间戳避免缓存
+      const timestamp = Date.now();
+      const url = ip ? `/api/ip-lookup?ip=${encodeURIComponent(ip)}&t=${timestamp}` : `/api/ip-lookup?t=${timestamp}`;
+      console.log('请求URL:', url); // 调试信息
       
       // 添加超时处理
       const controller = new AbortController();
@@ -56,6 +59,7 @@ export default function IPLookup() {
       }
       
       const data = await response.json();
+      console.log('API响应数据:', data); // 调试信息
       
       // 即使有错误也显示部分信息
       setIpInfo({
@@ -71,7 +75,7 @@ export default function IPLookup() {
       
       // 如果有错误信息，显示在错误提示中
       if (data.error) {
-        setError(`注意: ${data.error}`);
+        setError(`${data.error}`);
       }
     } catch (err) {
       console.error('IP查询错误:', err);
@@ -121,7 +125,10 @@ export default function IPLookup() {
 
   // 重新获取当前IP
   const refreshCurrentIP = () => {
+    console.log('点击了我的IP按钮'); // 调试信息
     setCustomIP('');
+    setIpInfo(null); // 清除之前的信息
+    // 强制清除缓存
     fetchIPInfo();
   };
 
