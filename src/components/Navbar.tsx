@@ -39,7 +39,6 @@ const Navbar = () => {
   const navItems = [
     { name: '首页', path: '/' },
     { name: '工具箱', path: '/tools' },
-    { name: '关于', path: '/about' },
   ];
 
   // 获取用户头像或生成默认头像
@@ -83,7 +82,7 @@ const Navbar = () => {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="text-xl font-bold text-gray-800 dark:text-white">
-                个人网站
+                小勇同学
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">

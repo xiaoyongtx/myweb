@@ -1,3 +1,24 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "关于我们 - AI编程工具箱 | DeepSeek AI助手开发者",
+  description: "了解AI编程工具箱的创建者小勇同学，90后奶爸程序员，专注于AI编程技术和DeepSeek AI助手的应用，分享副业经历和技术心得。",
+  keywords: [
+    "小勇同学", "AI编程", "DeepSeek", "程序员", "副业", "闲鱼项目", "AI助手",
+    "编程博客", "技术分享", "开发者", "人工智能", "编程工具开发者",
+    "AI Programming Developer", "DeepSeek AI", "Programming Blog", "Tech Sharing"
+  ],
+  openGraph: {
+    title: "关于我们 - AI编程工具箱开发者",
+    description: "了解AI编程工具箱的创建者小勇同学，专注于AI编程技术和DeepSeek AI助手的应用",
+    type: "profile",
+    url: "https://myweb.vercel.app/about",
+  },
+  alternates: {
+    canonical: "https://myweb.vercel.app/about",
+  },
+};
+
 export default function About() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

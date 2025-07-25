@@ -11,11 +11,7 @@ const Footer = () => {
             </Link>
           </div>
 
-          <div className="px-5 py-2">
-            <Link href="/articles" className="text-base text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-              文章
-            </Link>
-          </div>
+
 
           <div className="px-5 py-2">
             <Link href="/tools" className="text-base text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
@@ -23,11 +19,7 @@ const Footer = () => {
             </Link>
           </div>
 
-          <div className="px-5 py-2">
-            <Link href="/about" className="text-base text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-              关于
-            </Link>
-          </div>
+
         </nav>
         <p className="mt-8 text-center text-base text-gray-400">
           &copy; 2025 小勇同学. 保留所有权利.
