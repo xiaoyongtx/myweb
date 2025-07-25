@@ -22,47 +22,39 @@ export async function GET(request: Request) {
   const noCache = searchParams.get('no_cache') === 'true';
   
   try {
-    // 如果没有提供IP，先获取用户的IP
+    // 如果没有提供IP，获取访问者的真实IP
     let ipToLookup: string = ip || '';
     
     if (!ipToLookup) {
-      // 尝试多个API获取公网IP
-      const ipApis = [
-        { name: 'ipify', url: IP_APIS.ipify, parseResponse: (data: any) => data.ip },
-        { name: 'ipinfo', url: IP_APIS.ipinfo, parseResponse: (data: any) => data.ip },
-        { name: 'httpbin', url: IP_APIS.httpbin, parseResponse: (data: any) => data.origin }
-      ];
+      // 从请求头中获取访问者的真实IP地址
+      const forwarded = request.headers.get('x-forwarded-for');
+      const realIp = request.headers.get('x-real-ip');
+      const cfConnectingIp = request.headers.get('cf-connecting-ip'); // Cloudflare
       
-      for (const api of ipApis) {
-        try {
-          console.log(`尝试使用 ${api.name} 获取IP...`);
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          
-          const response = await fetch(api.url, { 
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json' },
-            signal: controller.signal
-          }).finally(() => clearTimeout(timeoutId));
-          
-          if (response.ok) {
-            const data = await response.json();
-            console.log(`${api.name} 响应:`, data);
-            const extractedIp = api.parseResponse(data);
-            if (extractedIp) {
-              ipToLookup = extractedIp;
-              console.log(`成功从 ${api.name} 获取IP:`, ipToLookup);
-              break;
-            }
-          }
-        } catch (error) {
-          console.error(`${api.name} API失败:`, error);
-          continue;
-        }
+      if (cfConnectingIp) {
+        ipToLookup = cfConnectingIp;
+      } else if (forwarded) {
+        // x-forwarded-for 可能包含多个IP，取第一个
+        ipToLookup = forwarded.split(',')[0].trim();
+      } else if (realIp) {
+        ipToLookup = realIp;
       }
       
+      // 如果还是没有获取到IP，返回错误
       if (!ipToLookup) {
-        throw new Error('无法获取IP地址');
+        return NextResponse.json({
+          error: '无法获取访问者IP地址',
+          tip: '可能是因为您在本地环境或代理后面'
+        }, { status: 400 });
+      }
+      
+      // 过滤掉本地IP地址
+      if (ipToLookup === '127.0.0.1' || ipToLookup === '::1' || ipToLookup.startsWith('192.168.') || ipToLookup.startsWith('10.') || ipToLookup.startsWith('172.')) {
+        return NextResponse.json({
+          error: '检测到本地IP地址',
+          ip: ipToLookup,
+          tip: '您可能在本地环境中，无法获取公网IP信息'
+        }, { status: 400 });
       }
     }
     

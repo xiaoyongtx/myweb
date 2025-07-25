@@ -148,7 +148,7 @@ export default function IPLookup() {
           公网IP查询工具
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
-          查询您的公网IP地址及地理位置信息
+          查询访问者的公网IP地址及地理位置信息
         </p>
       </div>
 
@@ -308,9 +308,10 @@ export default function IPLookup() {
             使用说明
           </h3>
           <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
-            <li>• 点击&quot;我的IP&quot;按钮可以查询您当前的公网IP地址信息</li>
+            <li>• 点击&quot;我的IP&quot;按钮可以查询您当前访问的公网IP地址信息</li>
             <li>• 您可以在输入框中输入任意IP地址来查询其地理位置信息</li>
             <li>• 如果有经纬度信息，可以点击&quot;在地图中查看位置&quot;按钮在Google地图中查看具体位置</li>
+            <li>• 本工具获取的是访问者的真实公网IP，而不是服务器IP</li>
             <li>• 本工具使用免费的IP地理位置数据库，信息仅供参考</li>
           </ul>
         </div>
