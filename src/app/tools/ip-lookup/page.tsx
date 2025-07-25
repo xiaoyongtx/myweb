@@ -101,10 +101,10 @@ export default function IPLookup() {
     }
   };
 
-  // 页面加载时自动获取用户IP
-  useEffect(() => {
-    fetchIPInfo();
-  }, []);
+  // 移除自动查询，等待用户操作
+  // useEffect(() => {
+  //   fetchIPInfo();
+  // }, []);
 
   // 查询自定义IP
   const handleCustomLookup = () => {
@@ -308,9 +308,8 @@ export default function IPLookup() {
             使用说明
           </h3>
           <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
-            <li>• 页面加载时会自动显示您当前的公网IP地址信息</li>
+            <li>• 点击&quot;我的IP&quot;按钮可以查询您当前的公网IP地址信息</li>
             <li>• 您可以在输入框中输入任意IP地址来查询其地理位置信息</li>
-            <li>• 点击&quot;我的IP&quot;按钮可以重新获取您当前的IP信息</li>
             <li>• 如果有经纬度信息，可以点击&quot;在地图中查看位置&quot;按钮在Google地图中查看具体位置</li>
             <li>• 本工具使用免费的IP地理位置数据库，信息仅供参考</li>
           </ul>
