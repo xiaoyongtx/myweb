@@ -171,6 +171,27 @@ const tools = [
       </svg>
     ),
   },
+  {
+    id: 'url-shortener',
+    name: '短链接生成器',
+    description: '将长URL转换为简短易分享的链接，支持多种短链接服务。',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function Tools() {
