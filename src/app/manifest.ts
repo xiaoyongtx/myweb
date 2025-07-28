@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'AI编程工具箱 - DeepSeek AI助手',
-    short_name: 'AI编程工具箱',
-    description: '专业的AI编程工具箱，集成DeepSeek AI助手，提供代码格式化、JSON工具、IP查询等实用功能',
+    name: '开发者工具箱',
+    short_name: '开发者工具箱',
+    description: '专业的开发者工具箱，提供代码格式化、JSON工具、IP查询、Markdown编辑器等实用功能',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

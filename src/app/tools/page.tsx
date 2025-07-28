@@ -2,17 +2,17 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "AI编程工具箱 - DeepSeek AI助手 | 专业开发者工具集合",
-  description: "专业的AI编程工具箱，包含代码格式化工具、JSON格式化器、公网IP查询、Markdown编辑器、颜色选择器、密码生成器等。集成DeepSeek AI助手，提升编程开发效率。",
+  title: "开发者工具箱 | 专业编程工具集合",
+  description: "专业的开发者工具箱，包含代码格式化工具、JSON格式化器、公网IP查询、Markdown编辑器、颜色选择器、密码生成器等实用开发工具。",
   keywords: [
-    "AI编程工具", "DeepSeek", "代码格式化", "JSON格式化", "IP查询", "Markdown编辑器",
-    "颜色选择器", "密码生成器", "图片压缩", "开发工具", "程序员工具", "AI助手",
+    "编程工具", "代码格式化", "JSON格式化", "IP查询", "Markdown编辑器",
+    "颜色选择器", "密码生成器", "图片压缩", "开发工具", "程序员工具",
     "Code Formatter", "JSON Formatter", "IP Lookup", "Markdown Editor",
     "Color Picker", "Password Generator", "Developer Tools", "Programming Tools"
   ],
   openGraph: {
-    title: "AI编程工具箱 - DeepSeek AI助手 | 专业开发者工具集合",
-    description: "专业的AI编程工具箱，包含多种实用的开发工具，集成DeepSeek AI助手",
+    title: "开发者工具箱 | 专业编程工具集合",
+    description: "专业的开发者工具箱，包含多种实用的编程开发工具",
     type: "website",
     url: "https://myweb.vercel.app/tools",
   },
@@ -199,10 +199,10 @@ export default function Tools() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-          AI编程工具箱 - DeepSeek AI助手
+          开发者工具箱
         </h1>
         <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400 sm:mt-4">
-          专业的AI编程工具集合，包含代码格式化、JSON工具、IP查询等实用功能，集成DeepSeek AI助手提升开发效率
+          专业的编程工具集合，包含代码格式化、JSON工具、IP查询、Markdown编辑器等实用功能，提升开发效率
         </p>
       </div>
 

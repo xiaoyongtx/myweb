@@ -30,8 +30,8 @@ export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'AI编程工具箱 - DeepSeek AI助手',
-    description: '专业的AI编程工具箱，集成DeepSeek AI助手，提供代码格式化、JSON工具、IP查询等实用功能',
+    name: '开发者工具箱',
+    description: '专业的开发者工具箱，提供代码格式化、JSON工具、IP查询、Markdown编辑器等实用功能',
     url: 'https://myweb.vercel.app',
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Web Browser',
@@ -46,8 +46,7 @@ export default function Home() {
       url: 'https://github.com/lizhiyong16'
     },
     featureList: [
-      'AI编程工具',
-      'DeepSeek AI助手',
+      '编程工具',
       '代码格式化工具',
       'JSON格式化器',
       '公网IP查询',
