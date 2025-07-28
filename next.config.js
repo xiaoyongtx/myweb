@@ -3,9 +3,6 @@ const nextConfig = {
   images: {
     domains: ['xodtkzaayxxuydrzrcyv.supabase.co'],
   },
-  experimental: {
-    disableDevToolbar: true
-  },
   // 禁用ESLint检查，以便构建通过
   eslint: {
     ignoreDuringBuilds: true

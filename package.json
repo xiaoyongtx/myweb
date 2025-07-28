@@ -19,11 +19,15 @@
     "@types/qrcode": "^1.5.5",
     "gray-matter": "^4.0.3",
     "next": "15.3.5",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.4.54",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "react-pdf": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
