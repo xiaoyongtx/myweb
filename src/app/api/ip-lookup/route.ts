@@ -6,31 +6,81 @@ const IP_APIS = {
   ipify: 'https://api.ipify.org?format=json',
   ipinfo: 'https://ipinfo.io/json',
   httpbin: 'https://httpbin.org/ip',
-  
-  // 获取IP详细信息的API
-  ipapi: (ip: string) => `https://ipapi.co/${ip}/json/`,
-  ipwhois: (ip: string) => `https://ipwho.is/${ip}`
+
+  // 获取IP详细信息的API - 按优先级排序
+  ipinfo_detail: (ip: string) => `https://ipinfo.io/${ip}/json`,
+  ipwhois: (ip: string) => `https://ipwho.is/${ip}`,
+  ipapi: (ip: string) => `https://ipapi.co/${ip}/json/`
 };
 
 // 添加缓存以提高性能
 const CACHE_DURATION = 3600; // 1小时，单位：秒
 const ipCache = new Map<string, { data: any, timestamp: number }>();
 
+// 国家代码转换为中文名称的辅助函数
+function getCountryName(countryCode: string): string {
+  const countryNames: { [key: string]: string } = {
+    'CN': '中国',
+    'US': '美国',
+    'JP': '日本',
+    'KR': '韩国',
+    'GB': '英国',
+    'DE': '德国',
+    'FR': '法国',
+    'CA': '加拿大',
+    'AU': '澳大利亚',
+    'SG': '新加坡',
+    'HK': '香港',
+    'TW': '台湾',
+    'RU': '俄罗斯',
+    'IN': '印度',
+    'BR': '巴西',
+    'IT': '意大利',
+    'ES': '西班牙',
+    'NL': '荷兰',
+    'SE': '瑞典',
+    'NO': '挪威',
+    'DK': '丹麦',
+    'FI': '芬兰',
+    'CH': '瑞士',
+    'AT': '奥地利',
+    'BE': '比利时',
+    'IE': '爱尔兰',
+    'PT': '葡萄牙',
+    'GR': '希腊',
+    'PL': '波兰',
+    'CZ': '捷克',
+    'HU': '匈牙利',
+    'RO': '罗马尼亚',
+    'BG': '保加利亚',
+    'HR': '克罗地亚',
+    'SI': '斯洛文尼亚',
+    'SK': '斯洛伐克',
+    'LT': '立陶宛',
+    'LV': '拉脱维亚',
+    'EE': '爱沙尼亚',
+    'MT': '马耳他',
+    'CY': '塞浦路斯',
+    'LU': '卢森堡'
+  };
+  return countryNames[countryCode] || countryCode;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const ip = searchParams.get('ip');
   const noCache = searchParams.get('no_cache') === 'true';
-  
+
   try {
     // 如果没有提供IP，获取访问者的真实IP
     let ipToLookup: string = ip || '';
-    
+
     if (!ipToLookup) {
       // 从请求头中获取访问者的真实IP地址
       const forwarded = request.headers.get('x-forwarded-for');
       const realIp = request.headers.get('x-real-ip');
       const cfConnectingIp = request.headers.get('cf-connecting-ip'); // Cloudflare
-      
+
       if (cfConnectingIp) {
         ipToLookup = cfConnectingIp;
       } else if (forwarded) {
@@ -39,7 +89,7 @@ export async function GET(request: Request) {
       } else if (realIp) {
         ipToLookup = realIp;
       }
-      
+
       // 如果还是没有获取到IP，返回错误
       if (!ipToLookup) {
         return NextResponse.json({
@@ -47,17 +97,57 @@ export async function GET(request: Request) {
           tip: '可能是因为您在本地环境或代理后面'
         }, { status: 400 });
       }
-      
-      // 过滤掉本地IP地址
+
+      // 如果检测到本地IP地址，通过外部API获取真实公网IP
       if (ipToLookup === '127.0.0.1' || ipToLookup === '::1' || ipToLookup.startsWith('192.168.') || ipToLookup.startsWith('10.') || ipToLookup.startsWith('172.')) {
-        return NextResponse.json({
-          error: '检测到本地IP地址',
-          ip: ipToLookup,
-          tip: '您可能在本地环境中，无法获取公网IP信息'
-        }, { status: 400 });
+        console.log('检测到本地IP，尝试通过外部API获取真实公网IP...');
+
+        // 尝试多个API获取公网IP
+        const ipApis = [
+          { name: 'ipify', url: IP_APIS.ipify, parseResponse: (data: any) => data.ip },
+          { name: 'ipinfo', url: IP_APIS.ipinfo, parseResponse: (data: any) => data.ip },
+          { name: 'httpbin', url: IP_APIS.httpbin, parseResponse: (data: any) => data.origin }
+        ];
+
+        let foundPublicIp = false;
+        for (const api of ipApis) {
+          try {
+            console.log(`尝试使用 ${api.name} 获取公网IP...`);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const response = await fetch(api.url, {
+              cache: 'no-store',
+              headers: { 'Accept': 'application/json' },
+              signal: controller.signal
+            }).finally(() => clearTimeout(timeoutId));
+
+            if (response.ok) {
+              const data = await response.json();
+              console.log(`${api.name} 响应:`, data);
+              const extractedIp = api.parseResponse(data);
+              if (extractedIp && extractedIp !== ipToLookup) {
+                ipToLookup = extractedIp;
+                console.log(`成功从 ${api.name} 获取公网IP:`, ipToLookup);
+                foundPublicIp = true;
+                break;
+              }
+            }
+          } catch (error) {
+            console.error(`${api.name} API失败:`, error);
+            continue;
+          }
+        }
+
+        if (!foundPublicIp) {
+          return NextResponse.json({
+            error: '无法获取公网IP地址',
+            tip: '本地环境且外部IP查询服务不可用'
+          }, { status: 400 });
+        }
       }
     }
-    
+
     // 如果仍然没有IP，返回错误
     if (!ipToLookup) {
       return NextResponse.json(
@@ -65,7 +155,7 @@ export async function GET(request: Request) {
         { status: 400 }
       );
     }
-    
+
     // 检查缓存
     if (!noCache && ipCache.has(ipToLookup)) {
       const cachedData = ipCache.get(ipToLookup);
@@ -73,85 +163,122 @@ export async function GET(request: Request) {
         return NextResponse.json(cachedData.data);
       }
     }
-    
-    console.log('查询IP:', ipToLookup); // 调试信息
-    
-    // 获取IP详细信息
+
+    console.log('查询IP:', ipToLookup);
+
+    // 获取IP详细信息 - 尝试多个API
     let ipDetails = null;
-    let error = null;
-    
-    // 尝试第一个API
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      
-      const geoResponse = await fetch(IP_APIS.ipapi(ipToLookup), { 
-        cache: 'no-store',
-        headers: { 'Accept': 'application/json' },
-        signal: controller.signal
-      }).finally(() => clearTimeout(timeoutId));
-      
-      if (geoResponse.ok) {
-        const data = await geoResponse.json();
-        console.log('第一个API响应:', data); // 调试信息
-        
-        if (!data.error) {
-          ipDetails = {
+
+    // API配置数组，按优先级排序
+    const geoApis = [
+      {
+        name: 'ipinfo',
+        url: IP_APIS.ipinfo_detail(ipToLookup),
+        parser: (data: any) => {
+          const loc = data.loc ? data.loc.split(',') : [null, null];
+          return {
             ip: ipToLookup,
-            country: data.country_name || '未知',
+            country: data.country ? getCountryName(data.country) : '未知',
             region: data.region || '未知',
             city: data.city || '未知',
-            isp: data.org || '未知',
+            isp: data.org ? data.org.replace(/^AS\d+\s+/, '') : '未知',
             timezone: data.timezone || '未知',
-            lat: data.latitude,
-            lon: data.longitude
+            lat: loc[0] ? parseFloat(loc[0]) : undefined,
+            lon: loc[1] ? parseFloat(loc[1]) : undefined,
+            asn: data.org?.match(/AS\d+/)?.[0],
+            org: data.org,
+            type: data.anycast ? 'Anycast' : undefined,
+            mobile: false,
+            proxy: false,
+            hosting: data.org?.toLowerCase().includes('hosting') ||
+              data.org?.toLowerCase().includes('cloud') ||
+              data.org?.toLowerCase().includes('server') || false
           };
-        } else {
-          error = data.reason || '无效的IP地址';
         }
+      },
+      {
+        name: 'ipwhois',
+        url: IP_APIS.ipwhois(ipToLookup),
+        parser: (data: any) => ({
+          ip: ipToLookup,
+          country: data.country || '未知',
+          region: data.region || '未知',
+          city: data.city || '未知',
+          isp: data.connection?.isp || data.isp || '未知',
+          timezone: data.timezone?.id || '未知',
+          lat: data.latitude,
+          lon: data.longitude,
+          asn: data.connection?.asn ? `AS${data.connection.asn}` : undefined,
+          org: data.connection?.org || data.org,
+          type: data.type,
+          mobile: data.is_mobile || false,
+          proxy: data.is_proxy || false,
+          hosting: data.is_hosting || false
+        })
+      },
+      {
+        name: 'ipapi',
+        url: IP_APIS.ipapi(ipToLookup),
+        parser: (data: any) => ({
+          ip: ipToLookup,
+          country: data.country_name || '未知',
+          region: data.region || '未知',
+          city: data.city || '未知',
+          isp: data.org || '未知',
+          timezone: data.timezone || '未知',
+          lat: data.latitude,
+          lon: data.longitude,
+          asn: data.asn,
+          org: data.org,
+          type: data.type,
+          mobile: data.connection?.mobile || false,
+          proxy: data.connection?.proxy || false,
+          hosting: data.connection?.hosting || false
+        })
       }
-    } catch (err) {
-      console.error('第一个API查询失败:', err);
-      error = '获取IP地理位置信息失败';
-    }
-    
-    // 如果第一个API失败，尝试第二个API
-    if (!ipDetails) {
+    ];
+
+    // 依次尝试各个API
+    for (const api of geoApis) {
       try {
+        console.log(`尝试使用 ${api.name} API...`);
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        const geoResponse = await fetch(IP_APIS.ipwhois(ipToLookup), { 
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+        const response = await fetch(api.url, {
           cache: 'no-store',
           headers: { 'Accept': 'application/json' },
           signal: controller.signal
         }).finally(() => clearTimeout(timeoutId));
-        
-        if (geoResponse.ok) {
-          const data = await geoResponse.json();
-          console.log('第二个API响应:', data); // 调试信息
-          
-          if (data.success) {
-            ipDetails = {
-              ip: ipToLookup,
-              country: data.country || '未知',
-              region: data.region || '未知',
-              city: data.city || '未知',
-              isp: data.connection?.isp || '未知',
-              timezone: data.timezone?.id || '未知',
-              lat: data.latitude,
-              lon: data.longitude
-            };
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`${api.name} API响应:`, data);
+
+          // 检查响应是否有效
+          if (api.name === 'ipapi' && data.error) {
+            console.log(`${api.name} API返回错误:`, data.reason);
+            continue;
           }
+
+          if (api.name === 'ipwhois' && !data.success) {
+            console.log(`${api.name} API返回失败`);
+            continue;
+          }
+
+          // 解析数据
+          ipDetails = api.parser(data);
+          console.log(`成功从 ${api.name} 获取IP信息:`, ipDetails);
+          break;
+        } else {
+          console.log(`${api.name} API响应状态:`, response.status);
         }
       } catch (err) {
-        console.error('第二个API查询失败:', err);
-        if (!error) {
-          error = '获取IP地理位置信息失败';
-        }
+        console.error(`${api.name} API查询失败:`, err);
+        continue;
       }
     }
-    
+
     // 如果所有地理位置API都失败了，至少返回IP地址
     if (!ipDetails) {
       console.log('所有地理位置API都失败，返回基本IP信息');
@@ -161,18 +288,24 @@ export async function GET(request: Request) {
         region: '未知',
         city: '未知',
         isp: '未知',
-        timezone: '未知'
+        timezone: '未知',
+        asn: undefined,
+        org: undefined,
+        type: undefined,
+        mobile: false,
+        proxy: false,
+        hosting: false
       };
-      
+
       return NextResponse.json(fallbackResponse);
     }
-    
+
     // 保存到缓存
     ipCache.set(ipToLookup, {
       data: ipDetails,
       timestamp: Date.now()
     });
-    
+
     // 清理过期缓存
     if (ipCache.size > 100) { // 限制缓存大小
       const now = Date.now();
@@ -182,12 +315,12 @@ export async function GET(request: Request) {
         }
       }
     }
-    
+
     return NextResponse.json(ipDetails);
   } catch (error) {
     console.error('IP查询错误:', error);
     return NextResponse.json(
-      { 
+      {
         error: error instanceof Error ? error.message : '获取IP信息失败',
         ip: ip || '未知'
       },

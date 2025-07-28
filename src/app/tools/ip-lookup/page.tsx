@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 interface IPInfo {
@@ -12,6 +12,16 @@ interface IPInfo {
   timezone: string;
   lat?: number;
   lon?: number;
+  type?: string;
+  mobile?: boolean;
+  proxy?: boolean;
+  hosting?: boolean;
+}
+
+interface IPHistory {
+  ip: string;
+  timestamp: number;
+  info: IPInfo;
 }
 
 export default function IPLookup() {
@@ -19,24 +29,23 @@ export default function IPLookup() {
   const [customIP, setCustomIP] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [history, setHistory] = useState<IPHistory[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [currentUserIP, setCurrentUserIP] = useState<string>('');
 
   // 获取用户的公网IP信息
   const fetchIPInfo = async (ip?: string) => {
-    console.log('开始查询IP:', ip || '当前用户IP'); // 调试信息
+    console.log('开始查询IP:', ip || '当前用户IP');
     setLoading(true);
     setError('');
     
     try {
-      // 使用我们的API路由，添加时间戳避免缓存
       const timestamp = Date.now();
       const url = ip ? `/api/ip-lookup?ip=${encodeURIComponent(ip)}&t=${timestamp}` : `/api/ip-lookup?t=${timestamp}`;
-      console.log('请求URL:', url); // 调试信息
       
-      // 添加超时处理
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
       
-      // 添加缓存控制和错误处理
       const response = await fetch(url, {
         signal: controller.signal,
         cache: 'no-store',
@@ -59,10 +68,9 @@ export default function IPLookup() {
       }
       
       const data = await response.json();
-      console.log('API响应数据:', data); // 调试信息
+      console.log('API响应数据:', data);
       
-      // 即使有错误也显示部分信息
-      setIpInfo({
+      const ipInfoData: IPInfo = {
         ip: data.ip || ip || '未知',
         country: data.country || '未知',
         region: data.region || '未知',
@@ -70,10 +78,27 @@ export default function IPLookup() {
         isp: data.isp || '未知',
         timezone: data.timezone || '未知',
         lat: data.lat,
-        lon: data.lon
-      });
+        lon: data.lon,
+        type: data.type,
+        mobile: data.mobile,
+        proxy: data.proxy,
+        hosting: data.hosting
+      };
       
-      // 如果有错误信息，显示在错误提示中
+      setIpInfo(ipInfoData);
+      
+      // 如果不是查询当前用户IP，则保存到历史记录
+      if (ip && ip !== currentUserIP) {
+        const newHistory: IPHistory = {
+          ip: ipInfoData.ip,
+          timestamp: Date.now(),
+          info: ipInfoData
+        };
+        setHistory(prev => [newHistory, ...prev.slice(0, 9)]); // 保留最近10条记录
+      } else if (!ip) {
+        setCurrentUserIP(ipInfoData.ip);
+      }
+      
       if (data.error) {
         setError(`${data.error}`);
       }
@@ -85,7 +110,6 @@ export default function IPLookup() {
         setError(err instanceof Error ? err.message : '获取IP信息失败');
       }
       
-      // 如果提供了IP，至少显示这个IP
       if (ip) {
         setIpInfo({
           ip: ip,
@@ -101,10 +125,14 @@ export default function IPLookup() {
     }
   };
 
-  // 移除自动查询，等待用户操作
-  // useEffect(() => {
-  //   fetchIPInfo();
-  // }, []);
+
+
+  // IP格式验证
+  const validateIP = (ip: string): boolean => {
+    const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$/;
+    return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+  };
 
   // 查询自定义IP
   const handleCustomLookup = () => {
@@ -113,10 +141,8 @@ export default function IPLookup() {
       return;
     }
     
-    // 简单的IP格式验证
-    const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    if (!ipRegex.test(customIP.trim())) {
-      setError('请输入有效的IPv4地址格式');
+    if (!validateIP(customIP.trim())) {
+      setError('请输入有效的IP地址格式（支持IPv4和IPv6）');
       return;
     }
     
@@ -125,16 +151,47 @@ export default function IPLookup() {
 
   // 重新获取当前IP
   const refreshCurrentIP = () => {
-    console.log('点击了我的IP按钮'); // 调试信息
+    console.log('点击了我的IP按钮');
     setCustomIP('');
-    setIpInfo(null); // 清除之前的信息
-    // 强制清除缓存
+    setIpInfo(null);
     fetchIPInfo();
   };
 
+  // 从历史记录中选择IP
+  const selectFromHistory = (historyItem: IPHistory) => {
+    setCustomIP(historyItem.ip);
+    setIpInfo(historyItem.info);
+    setShowHistory(false);
+  };
+
+  // 清除历史记录
+  const clearHistory = () => {
+    setHistory([]);
+    setShowHistory(false);
+  };
+
+  // 获取IP类型标签
+  const getIPTypeLabel = (info: IPInfo) => {
+    const labels = [];
+    if (info.mobile) labels.push('移动网络');
+    if (info.proxy) labels.push('代理');
+    if (info.hosting) labels.push('托管服务器');
+    if (info.type && info.type !== 'undefined') labels.push(info.type);
+    return labels.length > 0 ? labels.join(' | ') : '普通网络';
+  };
+
+  // 格式化地址显示
+  const formatLocation = (info: IPInfo) => {
+    const parts = [];
+    if (info.country && info.country !== '未知') parts.push(info.country);
+    if (info.region && info.region !== '未知' && info.region !== info.country) parts.push(info.region);
+    if (info.city && info.city !== '未知' && info.city !== info.region) parts.push(info.city);
+    return parts.length > 0 ? parts.join(' - ') : '未知';
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
         <Link
           href="/tools"
           className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
@@ -144,176 +201,375 @@ export default function IPLookup() {
       </div>
 
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          公网IP查询工具
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
+          IP地址查询
         </h1>
-        <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
-          查询访问者的公网IP地址及地理位置信息
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          专业的IP地址查询工具，支持IPv4和IPv6地址查询
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        {/* 查询控制面板 */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                查询指定IP地址（可选）
-              </label>
+      <div className="max-w-5xl mx-auto">
+        {/* 主查询面板 */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 p-8 rounded-xl shadow-lg mb-8">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+              IP地址查询
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              输入IP地址查询详细信息，或点击"查询我的IP"获取当前网络信息
+            </p>
+          </div>
+          
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
+            <div className="flex-1 w-full">
               <input
                 type="text"
                 value={customIP}
                 onChange={(e) => setCustomIP(e.target.value)}
                 placeholder="输入IP地址，如：8.8.8.8"
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-4 py-3 text-lg border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors"
                 onKeyDown={(e) => e.key === 'Enter' && handleCustomLookup()}
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={handleCustomLookup}
-                disabled={loading}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading || !customIP.trim()}
+                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
-                {loading ? '查询中...' : '查询IP'}
+                {loading ? '查询中...' : '查询'}
               </button>
               <button
                 onClick={refreshCurrentIP}
                 disabled={loading}
-                className="px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
-                我的IP
+                查询我的IP
               </button>
             </div>
           </div>
+
+          {/* 历史记录按钮 */}
+          {history.length > 0 && (
+            <div className="text-center mt-4">
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm font-medium"
+              >
+                查询历史 ({history.length})
+              </button>
+            </div>
+          )}
           
           {error && (
-            <div className="mt-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-md">
-              {error}
+            <div className="mt-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-lg text-center">
+              <div className="flex items-center justify-center">
+                <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                {error}
+              </div>
             </div>
           )}
         </div>
 
-        {/* IP信息展示 */}
-        {ipInfo && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              IP地址信息
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">IP地址</p>
-                    <p className="text-lg font-mono text-gray-600 dark:text-gray-300">{ipInfo.ip}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="flex-shrink-0 h-10 w-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-green-600 dark:text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">国家/地区</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">{ipInfo.country}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="flex-shrink-0 h-10 w-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">省份/城市</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">{ipInfo.region} / {ipInfo.city}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="flex-shrink-0 h-10 w-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-purple-600 dark:text-purple-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">网络服务商</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">{ipInfo.isp}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="flex-shrink-0 h-10 w-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-yellow-600 dark:text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">时区</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">{ipInfo.timezone}</p>
-                  </div>
-                </div>
-
-                {ipInfo.lat && ipInfo.lon && (
-                  <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex-shrink-0 h-10 w-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
-                      <svg className="h-5 w-5 text-red-600 dark:text-red-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">经纬度</p>
-                      <p className="text-lg font-mono text-gray-600 dark:text-gray-300">
-                        {ipInfo.lat.toFixed(4)}, {ipInfo.lon.toFixed(4)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+        {/* 历史记录面板 */}
+        {showHistory && history.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">查询历史</h3>
+              <button
+                onClick={clearHistory}
+                className="text-red-600 hover:text-red-700 dark:text-red-400 text-sm"
+              >
+                清除历史
+              </button>
             </div>
-
-            {/* 地图链接 */}
-            {ipInfo.lat && ipInfo.lon && (
-              <div className="mt-6 text-center">
-                <a
-                  href={`https://www.google.com/maps?q=${ipInfo.lat},${ipInfo.lon}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {history.map((item, index) => (
+                <div
+                  key={index}
+                  onClick={() => selectFromHistory(item)}
+                  className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                  </svg>
-                  在地图中查看位置
-                </a>
-              </div>
-            )}
+                  <div className="font-mono text-sm text-indigo-600 dark:text-indigo-400">{item.ip}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {item.info.country} {item.info.city}
+                  </div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500">
+                    {new Date(item.timestamp).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* 使用说明 */}
-        <div className="mt-8 bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
-          <h3 className="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
-            使用说明
-          </h3>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
-            <li>• 点击&quot;我的IP&quot;按钮可以查询您当前访问的公网IP地址信息</li>
-            <li>• 您可以在输入框中输入任意IP地址来查询其地理位置信息</li>
-            <li>• 如果有经纬度信息，可以点击&quot;在地图中查看位置&quot;按钮在Google地图中查看具体位置</li>
-            <li>• 本工具获取的是访问者的真实公网IP，而不是服务器IP</li>
-            <li>• 本工具使用免费的IP地理位置数据库，信息仅供参考</li>
-          </ul>
+        {/* IP信息展示 */}
+        {ipInfo && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+            {/* 头部信息 */}
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white flex items-center">
+                    IP地址详细信息
+                    <span className="ml-2 px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                      查询成功
+                    </span>
+                  </h2>
+                  <p className="text-indigo-100 text-sm mt-1">查询时间: {new Date().toLocaleString()}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-mono text-white">{ipInfo.ip}</div>
+                  <div className="text-indigo-100 text-sm">{getIPTypeLabel(ipInfo)}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {/* 基本信息表格 */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 w-32">
+                        IP地址
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300 font-mono">
+                        {ipInfo.ip}
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+                        归属地
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center">
+                          <span className="mr-2">🌍</span>
+                          {formatLocation(ipInfo)}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+                        运营商
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center">
+                          <span className="mr-2">🏢</span>
+                          {ipInfo.isp}
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+                        时区
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center">
+                          <span className="mr-2">🕐</span>
+                          {ipInfo.timezone}
+                        </div>
+                      </td>
+                    </tr>
+                    {ipInfo.lat && ipInfo.lon && (
+                      <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+                          坐标
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                          <div className="flex items-center">
+                            <span className="mr-2">📍</span>
+                            <span className="font-mono">
+                              {ipInfo.lat.toFixed(6)}, {ipInfo.lon.toFixed(6)}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
+                        网络类型
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center gap-2">
+                          <span>{getIPTypeLabel(ipInfo)}</span>
+                          {ipInfo.mobile && <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">移动</span>}
+                          {ipInfo.proxy && <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs rounded">代理</span>}
+                          {ipInfo.hosting && <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded">托管</span>}
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* 操作按钮 */}
+              <div className="mt-6 flex flex-wrap gap-3 justify-center">
+                {ipInfo.lat && ipInfo.lon && (
+                  <>
+                    <a
+                      href={`https://map.baidu.com/?latlng=${ipInfo.lat},${ipInfo.lon}&title=IP位置&content=${ipInfo.ip}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
+                      百度地图
+                    </a>
+                    <a
+                      href={`https://apis.map.qq.com/uri/v1/marker?marker=coord:${ipInfo.lat},${ipInfo.lon};title:IP位置;addr:${ipInfo.ip}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
+                      腾讯地图
+                    </a>
+                  </>
+                )}
+                <button
+                  onClick={() => navigator.clipboard.writeText(ipInfo.ip)}
+                  className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                  </svg>
+                  复制IP
+                </button>
+                <button
+                  onClick={() => {
+                    const info = `IP: ${ipInfo.ip}\n归属地: ${ipInfo.country} ${ipInfo.region} ${ipInfo.city}\n运营商: ${ipInfo.isp}\n时区: ${ipInfo.timezone}`;
+                    navigator.clipboard.writeText(info);
+                  }}
+                  className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a2 2 0 002 2h4a2 2 0 002-2V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                  </svg>
+                  复制详情
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 功能说明和常用IP */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          {/* 使用说明 */}
+          <div className="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
+              <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              使用说明
+            </h3>
+            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
+              <li>• 点击"查询我的IP"获取当前访问的公网IP地址信息</li>
+              <li>• 支持IPv4和IPv6地址格式查询</li>
+              <li>• 提供详细的地理位置、运营商、网络类型等信息</li>
+              <li>• 支持地图定位和信息复制功能</li>
+              <li>• 自动保存查询历史，方便快速重复查询</li>
+              <li>• 数据来源于多个专业IP数据库，确保准确性</li>
+            </ul>
+          </div>
+
+          {/* 常用公共DNS */}
+          <div className="bg-green-50 dark:bg-green-900 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-4 flex items-center">
+              <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />
+              </svg>
+              常用公共IP
+            </h3>
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">Google DNS</h4>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => { setCustomIP('8.8.8.8'); fetchIPInfo('8.8.8.8'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    8.8.8.8
+                  </button>
+                  <button
+                    onClick={() => { setCustomIP('8.8.4.4'); fetchIPInfo('8.8.4.4'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    8.8.4.4
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">Cloudflare DNS</h4>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => { setCustomIP('1.1.1.1'); fetchIPInfo('1.1.1.1'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    1.1.1.1
+                  </button>
+                  <button
+                    onClick={() => { setCustomIP('1.0.0.1'); fetchIPInfo('1.0.0.1'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    1.0.0.1
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">阿里DNS</h4>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => { setCustomIP('223.5.5.5'); fetchIPInfo('223.5.5.5'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    223.5.5.5
+                  </button>
+                  <button
+                    onClick={() => { setCustomIP('223.6.6.6'); fetchIPInfo('223.6.6.6'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    223.6.6.6
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">腾讯DNS</h4>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => { setCustomIP('119.29.29.29'); fetchIPInfo('119.29.29.29'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    119.29.29.29
+                  </button>
+                  <button
+                    onClick={() => { setCustomIP('182.254.116.116'); fetchIPInfo('182.254.116.116'); }}
+                    className="px-3 py-1 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 rounded text-xs font-mono hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+                    disabled={loading}
+                  >
+                    182.254.116.116
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
