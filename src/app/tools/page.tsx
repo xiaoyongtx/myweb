@@ -1,24 +1,15 @@
-import Link from 'next/link';
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: "开发者工具箱 | 专业编程工具集合",
-  description: "专业的开发者工具箱，包含代码格式化工具、JSON格式化器、公网IP查询、Markdown编辑器、颜色选择器、密码生成器等实用开发工具。",
-  keywords: [
-    "编程工具", "代码格式化", "JSON格式化", "IP查询", "Markdown编辑器",
-    "颜色选择器", "密码生成器", "图片压缩", "开发工具", "程序员工具",
-    "Code Formatter", "JSON Formatter", "IP Lookup", "Markdown Editor",
-    "Color Picker", "Password Generator", "Developer Tools", "Programming Tools"
-  ],
-  openGraph: {
-    title: "开发者工具箱 | 专业编程工具集合",
-    description: "专业的开发者工具箱，包含多种实用的编程开发工具",
-    type: "website",
-    url: "https://myweb.vercel.app/tools",
-  },
-  alternates: {
-    canonical: "https://myweb.vercel.app/tools",
-  },
+import Link from 'next/link';
+import { useState } from 'react';
+
+// 工具分类定义
+const categories = {
+  text: { name: '文本处理', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' },
+  image: { name: '图像处理', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' },
+  network: { name: '网络工具', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' },
+  productivity: { name: '效率工具', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' },
+  document: { name: '文档工具', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }
 };
 
 // 模拟工具数据
@@ -27,6 +18,7 @@ const tools = [
     id: 'markdown-editor',
     name: 'Markdown编辑器',
     description: '一个简单易用的Markdown编辑器，支持实时预览和常用Markdown语法。',
+    category: 'text',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -48,6 +40,7 @@ const tools = [
     id: 'json-formatter',
     name: 'JSON格式化工具',
     description: '格式化和验证JSON数据，使其更易于阅读和编辑。',
+    category: 'text',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -70,6 +63,7 @@ const tools = [
     id: 'color-picker',
     name: '颜色选择器',
     description: '一个简单的颜色选择工具，支持HEX、RGB和HSL格式。',
+    category: 'image',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -91,6 +85,7 @@ const tools = [
     id: 'password-generator',
     name: '密码生成器',
     description: '生成安全、随机的密码，可自定义长度和字符类型。',
+    category: 'productivity',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -112,6 +107,7 @@ const tools = [
     id: 'image-compressor',
     name: '图片压缩工具',
     description: '压缩图片文件大小，同时保持良好的图片质量。',
+    category: 'image',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -133,6 +129,7 @@ const tools = [
     id: 'code-formatter',
     name: '代码格式化工具',
     description: '格式化各种编程语言的代码，使其更易于阅读和维护。',
+    category: 'text',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -154,6 +151,7 @@ const tools = [
     id: 'ip-lookup',
     name: '公网IP查询',
     description: '查询您的公网IP地址及地理位置信息，支持自定义IP查询。',
+    category: 'network',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -175,6 +173,7 @@ const tools = [
     id: 'url-shortener',
     name: '短链接生成器',
     description: '将长URL转换为简短易分享的链接，支持多种短链接服务。',
+    category: 'network',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -196,6 +195,7 @@ const tools = [
     id: 'qr-generator',
     name: '二维码生成器',
     description: '快速生成高质量的二维码，支持自定义样式、尺寸和颜色。',
+    category: 'image',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -217,6 +217,7 @@ const tools = [
     id: 'image-splitter',
     name: '图片切割工具',
     description: '将图片按网格、水平或垂直方向切割成多个部分，支持自定义切割参数。',
+    category: 'image',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -238,6 +239,7 @@ const tools = [
     id: 'image-merger',
     name: '图片合并工具',
     description: '将多张图片合并为一张，支持网格、水平、垂直三种布局模式。',
+    category: 'image',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -259,6 +261,7 @@ const tools = [
     id: 'todo-list',
     name: '待办清单',
     description: '高效管理任务和计划，支持优先级、分类、搜索和数据导出功能。',
+    category: 'productivity',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -280,6 +283,7 @@ const tools = [
     id: 'pdf-tools',
     name: 'PDF合并拆分工具',
     description: '轻松合并多个PDF文件或将PDF拆分成多个文件，支持页面范围设置。',
+    category: 'document',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -301,6 +305,7 @@ const tools = [
     id: 'random-picker',
     name: '随机点名工具',
     description: '公平随机的点名工具，支持多轮点名、历史记录和批量导入名单。',
+    category: 'productivity',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -321,19 +326,55 @@ const tools = [
 ];
 
 export default function Tools() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // 过滤工具
+  const filteredTools = selectedCategory 
+    ? tools.filter(tool => tool.category === selectedCategory)
+    : tools;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-          开发者工具箱
+          AI编程工具库
         </h1>
         <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400 sm:mt-4">
-          专业的编程工具集合，包含代码格式化、JSON工具、IP查询、Markdown编辑器等实用功能，提升开发效率
+          智能化编程工具集合，助力开发者高效编程
         </p>
       </div>
 
+      {/* 分类筛选 */}
+      <div className="mb-8">
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => setSelectedCategory(null)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === null
+                ? 'bg-indigo-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            全部
+          </button>
+          {Object.entries(categories).map(([key, category]) => (
+            <button
+              key={key}
+              onClick={() => setSelectedCategory(key)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === key
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="mt-12 max-w-lg mx-auto grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:max-w-none">
-        {tools.map((tool) => (
+        {filteredTools.map((tool) => (
           <Link
             key={tool.id}
             href={`/tools/${tool.id}`}
@@ -341,8 +382,13 @@ export default function Tools() {
           >
             <div className="flex-1 bg-white dark:bg-gray-800 p-6 flex flex-col justify-between">
               <div className="flex-1">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mb-4">
-                  {tool.icon}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    {tool.icon}
+                  </div>
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${categories[tool.category as keyof typeof categories].color}`}>
+                    {categories[tool.category as keyof typeof categories].name}
+                  </span>
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {tool.name}
