@@ -114,7 +114,7 @@ export default function UrlShortener() {
 
       <div className="max-w-4xl mx-auto">
         {/* URL输入区域 */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md mb-6">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -159,7 +159,7 @@ export default function UrlShortener() {
 
         {/* 结果展示 */}
         {result && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               短链接生成成功！
             </h2>
@@ -232,19 +232,19 @@ export default function UrlShortener() {
 
               {/* 统计信息 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div className="p-3 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg">
                   <p className="text-sm text-blue-600 dark:text-blue-300">原始长度</p>
                   <p className="text-lg font-bold text-blue-800 dark:text-blue-100">
                     {result.originalUrl.length} 字符
                   </p>
                 </div>
-                <div className="p-3 bg-green-50 dark:bg-green-900 rounded-lg">
+                <div className="p-3 bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-800 rounded-lg">
                   <p className="text-sm text-green-600 dark:text-green-300">短链接长度</p>
                   <p className="text-lg font-bold text-green-800 dark:text-green-100">
                     {result.shortUrl.length} 字符
                   </p>
                 </div>
-                <div className="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg">
+                <div className="p-3 bg-purple-50 dark:bg-purple-900 border border-purple-200 dark:border-purple-800 rounded-lg">
                   <p className="text-sm text-purple-600 dark:text-purple-300">节省比例</p>
                   <p className="text-lg font-bold text-purple-800 dark:text-purple-100">
                     {Math.round((1 - result.shortUrl.length / result.originalUrl.length) * 100)}%
@@ -261,7 +261,7 @@ export default function UrlShortener() {
         )}
 
         {/* 使用说明 */}
-        <div className="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 p-6 rounded-lg">
           <h3 className="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
             使用说明
           </h3>

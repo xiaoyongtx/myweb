@@ -211,39 +211,31 @@ export default function IPLookup() {
 
       <div className="max-w-5xl mx-auto">
         {/* 主查询面板 */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 p-8 rounded-xl shadow-lg mb-8">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md mb-8">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               IP地址查询
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              输入IP地址查询详细信息，或点击"查询我的IP"获取当前网络信息
-            </p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
-            <div className="flex-1 w-full">
+            </label>
+            <div className="flex flex-col md:flex-row gap-3">
               <input
                 type="text"
                 value={customIP}
                 onChange={(e) => setCustomIP(e.target.value)}
                 placeholder="输入IP地址，如：8.8.8.8"
-                className="w-full px-4 py-3 text-lg border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors"
+                className="flex-1 p-2 border border-gray-300 dark:border-gray-700 rounded-l-md dark:bg-gray-700 dark:text-white"
                 onKeyDown={(e) => e.key === 'Enter' && handleCustomLookup()}
               />
-            </div>
-            <div className="flex gap-3">
               <button
                 onClick={handleCustomLookup}
                 disabled={loading || !customIP.trim()}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '查询中...' : '查询'}
               </button>
               <button
                 onClick={refreshCurrentIP}
                 disabled={loading}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                className="px-4 py-2 bg-green-600 text-white rounded-r-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 查询我的IP
               </button>
@@ -252,7 +244,7 @@ export default function IPLookup() {
 
           {/* 历史记录按钮 */}
           {history.length > 0 && (
-            <div className="text-center mt-4">
+            <div className="mt-4">
               <button
                 onClick={() => setShowHistory(!showHistory)}
                 className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm font-medium"
@@ -261,22 +253,16 @@ export default function IPLookup() {
               </button>
             </div>
           )}
-          
           {error && (
-            <div className="mt-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-lg text-center">
-              <div className="flex items-center justify-center">
-                <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                {error}
-              </div>
+            <div className="mt-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-lg">
+              {error}
             </div>
           )}
         </div>
 
         {/* 历史记录面板 */}
         {showHistory && history.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md mb-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">查询历史</h3>
               <button
@@ -308,7 +294,7 @@ export default function IPLookup() {
 
         {/* IP信息展示 */}
         {ipInfo && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
             {/* 头部信息 */}
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
               <div className="flex items-center justify-between">
@@ -363,7 +349,6 @@ export default function IPLookup() {
                         </div>
                       </td>
                     </tr>
-
                     <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-3 px-4 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800">
                         时区
@@ -466,7 +451,7 @@ export default function IPLookup() {
         {/* 功能说明和常用IP */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           {/* 使用说明 */}
-          <div className="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+          <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
               <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -484,7 +469,7 @@ export default function IPLookup() {
           </div>
 
           {/* 常用公共DNS */}
-          <div className="bg-green-50 dark:bg-green-900 p-6 rounded-lg">
+          <div className="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-800 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-4 flex items-center">
               <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />

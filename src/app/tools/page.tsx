@@ -211,7 +211,7 @@ export default function Tools() {
           <Link
             key={tool.id}
             href={`/tools/${tool.id}`}
-            className="flex flex-col rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:transform hover:scale-105"
+            className="flex flex-col rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-transform duration-300 hover:transform hover:scale-105"
           >
             <div className="flex-1 bg-white dark:bg-gray-800 p-6 flex flex-col justify-between">
               <div className="flex-1">
