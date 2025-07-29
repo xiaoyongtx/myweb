@@ -105,29 +105,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
-      // 1. 调用Supabase API退出
       await supabase.auth.signOut();
-      
-      // 2. 清除状态
       setUser(null);
       setProfile(null);
-      
-      // 3. 清除本地存储 - 使用useEffect确保只在客户端执行
-      
       return true;
     } catch (error) {
       console.error('Error signing out:', error);
       return false;
     }
   };
-  
-  // 将清除本地存储的逻辑移到useEffect中，确保只在客户端执行
-  useEffect(() => {
-    // 这个useEffect只会在客户端执行
-    return () => {
-      // 清理函数，不会在服务器端执行
-    };
-  }, []);
 
   return (
     <UserContext.Provider value={{ user, profile, loading, refreshProfile, signOut }}>

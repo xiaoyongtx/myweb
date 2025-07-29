@@ -8,16 +8,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next",
-    "analyze": "ANALYZE=true next build"
+    "clean": "rm -rf .next"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.5",
     "@tailwindcss/typography": "^0.5.16",
     "@types/qrcode": "^1.5.5",
-    "gray-matter": "^4.0.3",
+
     "next": "15.3.5",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.54",
@@ -31,7 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@next/bundle-analyzer": "^15.3.5",
+
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
