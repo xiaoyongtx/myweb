@@ -108,7 +108,7 @@ print(f"总和: {result}")  # 输出: 总和: 15
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          Markdown编辑器
+          Markdown编辑
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
           编写和预览Markdown文本

@@ -57,7 +57,7 @@ export default function JsonFormatter() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          JSON 格式化工具
+          JSON 格式化
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
           格式化和验证 JSON 数据
@@ -116,6 +116,41 @@ export default function JsonFormatter() {
             value={jsonOutput}
             readOnly
           />
+        </div>
+      </div>
+
+      {/* 使用说明 */}
+      <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
+          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          使用说明
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
+          <div>
+            <h3 className="font-medium mb-2">主要功能</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li><strong>校验：</strong>检查JSON语法是否正确</li>
+              <li><strong>格式化：</strong>美化JSON结构，便于阅读</li>
+              <li><strong>压缩：</strong>移除空格和换行，减小文件大小</li>
+              <li>支持自定义缩进格式</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-medium mb-2">使用技巧</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>粘贴JSON数据到左侧输入框</li>
+              <li>先点击"校验"检查语法</li>
+              <li>选择合适的缩进格式</li>
+              <li>点击"格式化"或"压缩"处理数据</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>格式化后的JSON更易于阅读和调试，压缩后的JSON适合网络传输和存储。
+          </p>
         </div>
       </div>
     </div>

@@ -334,7 +334,7 @@ export default function RandomPicker() {
   const pickedCount = pickedNames.length;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
         <Link
           href="/tools"
@@ -346,7 +346,7 @@ export default function RandomPicker() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          随机点名工具
+          随机点名
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
           公平、随机的点名工具，支持多轮点名和历史记录

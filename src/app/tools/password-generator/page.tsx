@@ -82,15 +82,14 @@ export default function PasswordGenerator() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          密码生成器
+          密码生成
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
           生成安全、随机的密码
         </p>
       </div>
 
-      <div className="max-w-5xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               生成密码
@@ -230,43 +229,38 @@ export default function PasswordGenerator() {
           </div>
         </div>
 
-        {/* 使用说明 */}
-        <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-6 rounded-lg">
-          <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">
-            使用说明
-          </h2>
-          
-          <div className="space-y-4 text-sm text-blue-800 dark:text-blue-200">
-            <div>
-              <h3 className="font-medium mb-2">字符类型说明：</h3>
-              <ul className="space-y-1 ml-4">
-                <li>• <strong>小写字母：</strong> a-z (26个字符)</li>
-                <li>• <strong>大写字母：</strong> A-Z (26个字符)</li>
-                <li>• <strong>数字：</strong> 0-9 (10个字符)</li>
-                <li>• <strong>特殊符号：</strong> <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">{'!@#$%^&*()_+~`|}{[]\\:;"<>,.?/-='}</code> (32个字符)</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-medium mb-2">使用建议：</h3>
-              <ul className="space-y-1 ml-4">
-                <li>• 建议密码长度至少8位，推荐12位以上</li>
-                <li>• 同时包含多种字符类型可提高密码强度</li>
-                <li>• 可排除容易混淆的字符，如：0O1l (零、大写O、数字1、小写l)</li>
-                <li>• 生成后请妥善保存密码，建议使用密码管理器</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-medium mb-2">密码强度评级：</h3>
-              <ul className="space-y-1 ml-4">
-                <li>• <span className="text-red-600 dark:text-red-400">非常弱/弱：</span> 长度不足或字符类型单一</li>
-                <li>• <span className="text-yellow-600 dark:text-yellow-400">中等：</span> 长度适中，包含2-3种字符类型</li>
-                <li>• <span className="text-blue-600 dark:text-blue-400">强：</span> 长度充足，包含多种字符类型</li>
-                <li>• <span className="text-green-600 dark:text-green-400">非常强：</span> 长度充足，包含所有字符类型</li>
-              </ul>
-            </div>
+      {/* 使用说明 */}
+      <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
+          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          使用说明
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
+          <div>
+            <h3 className="font-medium mb-2">字符类型</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li><strong>小写字母：</strong> a-z (26个字符)</li>
+              <li><strong>大写字母：</strong> A-Z (26个字符)</li>
+              <li><strong>数字：</strong> 0-9 (10个字符)</li>
+              <li><strong>特殊符号：</strong> 32个常用符号</li>
+            </ul>
           </div>
+          <div>
+            <h3 className="font-medium mb-2">安全建议</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>建议密码长度至少12位</li>
+              <li>包含多种字符类型提高强度</li>
+              <li>可排除容易混淆的字符</li>
+              <li>使用密码管理器保存</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>强密码应包含大小写字母、数字和特殊符号，避免使用个人信息。
+          </p>
         </div>
       </div>
     </div>

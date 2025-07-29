@@ -105,16 +105,15 @@ export default function UrlShortener() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          短链接生成工具
+          短链接生成
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
           将长URL转换为简短易分享的链接
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        {/* URL输入区域 */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md mb-6">
+      {/* URL输入区域 */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md mb-6">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -260,19 +259,38 @@ export default function UrlShortener() {
           </div>
         )}
 
-        {/* 使用说明 */}
-        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 p-6 rounded-lg">
-          <h3 className="text-lg font-medium text-blue-900 dark:text-blue-100 mb-3">
-            使用说明
-          </h3>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
-            <li>• 输入完整的URL（必须包含 http:// 或 https://）</li>
-            <li>• 点击"生成短链接"按钮创建短链接</li>
-            <li>• 点击"复制"按钮将短链接复制到剪贴板</li>
-            <li>• 短链接可以直接点击访问原始网址</li>
-            <li>• 本工具使用免费的短链接服务，生成的链接长期有效</li>
-            <li>• 请不要用于恶意网站或违法内容的链接缩短</li>
-          </ul>
+      {/* 使用说明 */}
+      <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
+          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          使用说明
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
+          <div>
+            <h3 className="font-medium mb-2">基本功能</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>输入完整的URL（必须包含 http:// 或 https://）</li>
+              <li>点击"生成短链接"按钮创建短链接</li>
+              <li>点击"复制"按钮将短链接复制到剪贴板</li>
+              <li>短链接可以直接点击访问原始网址</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-medium mb-2">注意事项</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>本工具使用免费的短链接服务</li>
+              <li>生成的链接长期有效</li>
+              <li>请不要用于恶意网站或违法内容</li>
+              <li>支持统计信息和节省比例显示</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>短链接适合社交媒体分享和统计点击量，建议保存原始链接以备不时之需。
+          </p>
         </div>
       </div>
     </div>

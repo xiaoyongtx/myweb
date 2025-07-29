@@ -70,15 +70,14 @@ export default function CodeFormatter() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          代码格式化工具
+          代码格式化
         </h1>
         <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
           格式化各种编程语言的代码，使其更易于阅读和维护
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               选择语言
@@ -140,6 +139,40 @@ export default function CodeFormatter() {
               格式化代码
             </button>
           </div>
+        </div>
+
+      {/* 使用说明 */}
+      <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
+          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          使用说明
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
+          <div>
+            <h3 className="font-medium mb-2">支持语言</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>JavaScript/TypeScript - 基础格式化</li>
+              <li>JSON - 标准格式化和验证</li>
+              <li>Python/Java/C# - 基础缩进</li>
+              <li>HTML/CSS/PHP - 基础格式化</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-medium mb-2">功能特性</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>自动缩进和对齐</li>
+              <li>语法错误检测</li>
+              <li>实时格式化预览</li>
+              <li>支持复制格式化结果</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>JSON格式化功能最为完善，其他语言提供基础的缩进格式化。建议使用专业IDE进行复杂代码格式化。
+          </p>
         </div>
       </div>
     </div>

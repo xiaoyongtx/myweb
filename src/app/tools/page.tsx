@@ -16,7 +16,7 @@ const categories = {
 const tools = [
   {
     id: 'markdown-editor',
-    name: 'Markdown编辑器',
+    name: 'Markdown编辑',
     description: '一个简单易用的Markdown编辑器，支持实时预览和常用Markdown语法。',
     category: 'text',
     icon: (
@@ -38,7 +38,7 @@ const tools = [
   },
   {
     id: 'json-formatter',
-    name: 'JSON格式化工具',
+    name: 'JSON格式化',
     description: '格式化和验证JSON数据，使其更易于阅读和编辑。',
     category: 'text',
     icon: (
@@ -61,8 +61,8 @@ const tools = [
   },
   {
     id: 'color-picker',
-    name: '颜色选择器',
-    description: '一个简单的颜色选择工具，支持HEX、RGB和HSL格式。',
+    name: '颜色选择',
+    description: '一个简单的颜色选择器，支持HEX、RGB和HSL格式。',
     category: 'image',
     icon: (
       <svg
@@ -83,7 +83,7 @@ const tools = [
   },
   {
     id: 'password-generator',
-    name: '密码生成器',
+    name: '密码生成',
     description: '生成安全、随机的密码，可自定义长度和字符类型。',
     category: 'productivity',
     icon: (
@@ -105,7 +105,7 @@ const tools = [
   },
   {
     id: 'image-compressor',
-    name: '图片压缩工具',
+    name: '图片压缩',
     description: '压缩图片文件大小，同时保持良好的图片质量。',
     category: 'image',
     icon: (
@@ -127,7 +127,7 @@ const tools = [
   },
   {
     id: 'code-formatter',
-    name: '代码格式化工具',
+    name: '代码格式化',
     description: '格式化各种编程语言的代码，使其更易于阅读和维护。',
     category: 'text',
     icon: (
@@ -171,7 +171,7 @@ const tools = [
   },
   {
     id: 'url-shortener',
-    name: '短链接生成器',
+    name: '短链接生成',
     description: '将长URL转换为简短易分享的链接，支持多种短链接服务。',
     category: 'network',
     icon: (
@@ -193,7 +193,7 @@ const tools = [
   },
   {
     id: 'qr-generator',
-    name: '二维码生成器',
+    name: '二维码生成',
     description: '快速生成高质量的二维码，支持自定义样式、尺寸和颜色。',
     category: 'image',
     icon: (
@@ -215,7 +215,7 @@ const tools = [
   },
   {
     id: 'image-splitter',
-    name: '图片切割工具',
+    name: '图片切割',
     description: '将图片按网格、水平或垂直方向切割成多个部分，支持自定义切割参数。',
     category: 'image',
     icon: (
@@ -237,7 +237,7 @@ const tools = [
   },
   {
     id: 'image-merger',
-    name: '图片合并工具',
+    name: '图片合并',
     description: '将多张图片合并为一张，支持网格、水平、垂直三种布局模式。',
     category: 'image',
     icon: (
@@ -281,7 +281,7 @@ const tools = [
   },
   {
     id: 'pdf-tools',
-    name: 'PDF合并拆分工具',
+    name: 'PDF合并拆分',
     description: '轻松合并多个PDF文件或将PDF拆分成多个文件，支持页面范围设置。',
     category: 'document',
     icon: (
@@ -303,8 +303,8 @@ const tools = [
   },
   {
     id: 'random-picker',
-    name: '随机点名工具',
-    description: '公平随机的点名工具，支持多轮点名、历史记录和批量导入名单。',
+    name: '随机点名',
+    description: '公平随机的点名器，支持多轮点名、历史记录和批量导入名单。',
     category: 'productivity',
     icon: (
       <svg
@@ -323,6 +323,94 @@ const tools = [
       </svg>
     ),
   },
+  {
+    id: 'image-to-pdf',
+    name: '图片转PDF',
+    description: '将多张图片合并转换为PDF文件，支持自定义页面大小和排版。',
+    category: 'document',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+        />
+      </svg>
+    ),
+  },
+  {
+    id: 'signature-generator',
+    name: '电子签名生成',
+    description: '创建个性化的电子签名，支持手写、字体和图片签名。',
+    category: 'document',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+        />
+      </svg>
+    ),
+  },
+  {
+    id: 'qr-batch-generator',
+    name: '二维码批量生成',
+    description: '批量生成二维码，支持Excel导入和自动编码功能。',
+    category: 'image',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+        />
+      </svg>
+    ),
+  },
+  {
+    id: 'timestamp-converter',
+    name: '时间戳转换',
+    description: '时间戳与日期时间的相互转换，支持多种时区和格式。',
+    category: 'productivity',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function Tools() {
@@ -332,6 +420,11 @@ export default function Tools() {
   const filteredTools = selectedCategory 
     ? tools.filter(tool => tool.category === selectedCategory)
     : tools;
+
+  // 计算每个分类的工具数量
+  const getCategoryCount = (categoryKey: string) => {
+    return tools.filter(tool => tool.category === categoryKey).length;
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -355,7 +448,7 @@ export default function Tools() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             }`}
           >
-            全部
+            全部 ({tools.length})
           </button>
           {Object.entries(categories).map(([key, category]) => (
             <button
@@ -367,7 +460,7 @@ export default function Tools() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               }`}
             >
-              {category.name}
+              {category.name} ({getCategoryCount(key)})
             </button>
           ))}
         </div>

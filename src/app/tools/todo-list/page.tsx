@@ -166,7 +166,7 @@ export default function TodoList() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
         <Link
           href="/tools"
@@ -391,6 +391,41 @@ export default function TodoList() {
           </div>
         </div>
       )}
+
+      {/* 使用说明 */}
+      <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
+          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          使用说明
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
+          <div>
+            <h3 className="font-medium mb-2">基本功能</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>添加、编辑、删除待办事项</li>
+              <li>设置优先级（高、中、低）</li>
+              <li>分类管理任务</li>
+              <li>标记完成状态</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-medium mb-2">高级功能</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>按状态、优先级、分类筛选</li>
+              <li>搜索功能快速定位</li>
+              <li>分类统计和进度跟踪</li>
+              <li>点击任务文本可直接编辑</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>数据保存在浏览器本地，清除浏览器数据会丢失任务。建议定期备份重要任务。
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
