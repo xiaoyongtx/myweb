@@ -1,42 +1,27 @@
 import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { type CookieOptions } from '@supabase/ssr';
+import { NextRequest } from 'next/server';
 
-// 创建Supabase服务端客户端
-export async function createSupabaseServerClient() {
-  const cookieStore = cookies();
-  
+// 创建服务端Supabase客户端
+export const createSupabaseServerClient = (request: NextRequest) => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   
   if (!supabaseUrl || !supabaseKey) {
-    console.error('Supabase URL or key is missing. Please check your environment variables.');
-    throw new Error('Supabase configuration is missing');
+    throw new Error('Supabase URL or key is missing');
   }
-  
-  return createServerClient(
-    supabaseUrl,
-    supabaseKey,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {
-            console.error('Error setting cookie:', error);
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.delete({ name, ...options });
-          } catch (error) {
-            console.error('Error removing cookie:', error);
-          }
-        },
+
+  return createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      get(name: string) {
+        return request.cookies.get(name)?.value;
       },
-    }
-  );
-}
+      set() {
+        // 在API路由中，我们通常不需要设置cookies
+        // 因为认证状态由客户端管理
+      },
+      remove() {
+        // 在API路由中，我们通常不需要删除cookies
+      },
+    },
+  });
+};

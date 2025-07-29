@@ -1,17 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase';
 
-export default function Login() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createSupabaseClient();
+  
+  // 获取重定向URL
+  const redirectUrl = searchParams.get('redirect') || '/';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +32,8 @@ export default function Login() {
         throw error;
       }
 
-      router.push('/');
+      // 登录成功后重定向到指定页面
+      router.push(redirectUrl);
       router.refresh();
     } catch (error: unknown) {
       setError((error as Error).message || '登录失败，请重试');
@@ -47,7 +52,7 @@ export default function Login() {
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             或{' '}
             <Link
-              href="/auth/register"
+              href={`/auth/register${redirectUrl !== '/' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`}
               className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               注册新账户
@@ -133,5 +138,15 @@ export default function Login() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="text-gray-600 dark:text-gray-400">加载中...</div>
+    </div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

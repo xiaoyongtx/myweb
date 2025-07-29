@@ -28,7 +28,7 @@ export default function RandomPicker() {
   const [excelData, setExcelData] = useState<string[][]>([]);
   const [selectedColumn, setSelectedColumn] = useState(0);
   const [startRow, setStartRow] = useState(1);
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const excelFileInputRef = useRef<HTMLInputElement>(null);
 
   // 从localStorage加载数据

@@ -1,18 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase';
 
-export default function Register() {
+function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createSupabaseClient();
+  
+  // 获取重定向URL
+  const redirectUrl = searchParams.get('redirect') || '/';
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +62,7 @@ export default function Register() {
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             或{' '}
             <Link
-              href="/auth/login"
+              href={`/auth/login${redirectUrl !== '/' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`}
               className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               登录已有账户
@@ -134,5 +138,15 @@ export default function Register() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="text-gray-600 dark:text-gray-400">加载中...</div>
+    </div>}>
+      <RegisterForm />
+    </Suspense>
   );
 }
