@@ -100,7 +100,6 @@ export async function GET(request: Request) {
 
       // 如果检测到本地IP地址，通过外部API获取真实公网IP
       if (ipToLookup === '127.0.0.1' || ipToLookup === '::1' || ipToLookup.startsWith('192.168.') || ipToLookup.startsWith('10.') || ipToLookup.startsWith('172.')) {
-        console.log('检测到本地IP，尝试通过外部API获取真实公网IP...');
 
         // 尝试多个API获取公网IP
         const ipApis = [
@@ -112,7 +111,6 @@ export async function GET(request: Request) {
         let foundPublicIp = false;
         for (const api of ipApis) {
           try {
-            console.log(`尝试使用 ${api.name} 获取公网IP...`);
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000);
 
@@ -124,17 +122,14 @@ export async function GET(request: Request) {
 
             if (response.ok) {
               const data = await response.json();
-              console.log(`${api.name} 响应:`, data);
               const extractedIp = api.parseResponse(data);
               if (extractedIp && extractedIp !== ipToLookup) {
                 ipToLookup = extractedIp;
-                console.log(`成功从 ${api.name} 获取公网IP:`, ipToLookup);
                 foundPublicIp = true;
                 break;
               }
             }
           } catch (error) {
-            console.error(`${api.name} API失败:`, error);
             continue;
           }
         }
@@ -164,7 +159,6 @@ export async function GET(request: Request) {
       }
     }
 
-    console.log('查询IP:', ipToLookup);
 
     // 获取IP详细信息 - 尝试多个API
     let ipDetails = null;
@@ -241,7 +235,6 @@ export async function GET(request: Request) {
     // 依次尝试各个API
     for (const api of geoApis) {
       try {
-        console.log(`尝试使用 ${api.name} API...`);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000);
 
@@ -253,35 +246,28 @@ export async function GET(request: Request) {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(`${api.name} API响应:`, data);
 
           // 检查响应是否有效
           if (api.name === 'ipapi' && data.error) {
-            console.log(`${api.name} API返回错误:`, data.reason);
             continue;
           }
 
           if (api.name === 'ipwhois' && !data.success) {
-            console.log(`${api.name} API返回失败`);
             continue;
           }
 
           // 解析数据
           ipDetails = api.parser(data);
-          console.log(`成功从 ${api.name} 获取IP信息:`, ipDetails);
           break;
         } else {
-          console.log(`${api.name} API响应状态:`, response.status);
         }
       } catch (err) {
-        console.error(`${api.name} API查询失败:`, err);
         continue;
       }
     }
 
     // 如果所有地理位置API都失败了，至少返回IP地址
     if (!ipDetails) {
-      console.log('所有地理位置API都失败，返回基本IP信息');
       const fallbackResponse = {
         ip: ipToLookup,
         country: '未知',

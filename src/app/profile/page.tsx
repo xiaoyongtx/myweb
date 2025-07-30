@@ -150,9 +150,6 @@ export default function ProfilePage() {
     }
   };
 
-  // 添加调试信息
-  console.log('Profile page state:', { loading, user, profile });
-
   // 如果正在加载，显示加载状态
   if (loading) {
     return (

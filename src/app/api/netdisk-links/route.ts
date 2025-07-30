@@ -8,14 +8,8 @@ export async function GET(request: NextRequest) {
     // 获取当前用户
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    console.log('GET /api/netdisk-links - Auth check:', { 
-      hasUser: !!user, 
-      userId: user?.id, 
-      authError: authError?.message 
-    });
     
     if (authError) {
-      console.error('Auth error:', authError);
       return NextResponse.json({ 
         error: '认证错误', 
         details: authError.message 

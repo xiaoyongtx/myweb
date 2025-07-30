@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const { url } = await request.json();
-    console.log('收到短链接请求:', url);
 
     if (!url) {
       return NextResponse.json(
@@ -107,7 +106,6 @@ export async function POST(request: NextRequest) {
 
     // 生成短链接
     const result = await createShortUrl(url);
-    console.log('短链接生成结果:', result);
 
     return NextResponse.json({
       originalUrl: url,

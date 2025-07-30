@@ -213,20 +213,16 @@ export default function NetdiskManager() {
       if (selectedPlatform) params.append('platform', selectedPlatform);
       if (searchTerm) params.append('search', searchTerm);
 
-      console.log('Loading links for user:', user.id);
       const response = await fetch(`/api/netdisk-links?${params.toString()}`);
       const data = await response.json();
 
-      console.log('API response:', { status: response.status, data });
 
       if (response.ok) {
         setLinks(data.links || []);
       } else {
-        console.error('API error:', data);
         toast.error(data.error || '加载链接失败');
       }
     } catch (error) {
-      console.error('Error loading links:', error);
       toast.error('加载链接失败');
     } finally {
       setLoading(false);
@@ -285,7 +281,6 @@ export default function NetdiskManager() {
         toast.error(data.error || '保存链接失败');
       }
     } catch (error) {
-      console.error('Error adding links:', error);
       toast.error('保存链接失败');
     }
   };
@@ -308,7 +303,6 @@ export default function NetdiskManager() {
         toast.error(data.error || '删除链接失败');
       }
     } catch (error) {
-      console.error('Error deleting link:', error);
       toast.error('删除链接失败');
     }
   };
@@ -337,7 +331,6 @@ export default function NetdiskManager() {
         toast.error(data.error || '删除链接失败');
       }
     } catch (error) {
-      console.error('Error deleting links:', error);
       toast.error('删除链接失败');
     }
   };

@@ -38,6 +38,7 @@ yarn-error.log*
 next-env.d.ts
 
 # IDE
+.claude/
 .idea/
 .vscode/*
 !.vscode/extensions.json

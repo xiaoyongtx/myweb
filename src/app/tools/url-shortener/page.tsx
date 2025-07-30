@@ -19,7 +19,6 @@ export default function UrlShortener() {
 
   // 生成短链接
   const handleShortenUrl = async () => {
-    console.log('开始生成短链接，URL:', originalUrl);
     
     if (!originalUrl.trim()) {
       setError('请输入要缩短的URL');
@@ -37,7 +36,6 @@ export default function UrlShortener() {
     setResult(null);
 
     try {
-      console.log('发送请求到API...');
       const response = await fetch('/api/url-shortener', {
         method: 'POST',
         headers: {
@@ -46,18 +44,14 @@ export default function UrlShortener() {
         body: JSON.stringify({ url: originalUrl.trim() }),
       });
 
-      console.log('API响应状态:', response.status);
       const data = await response.json();
-      console.log('API响应数据:', data);
 
       if (!response.ok) {
         throw new Error(data.error || '生成短链接失败');
       }
 
       setResult(data);
-      console.log('短链接生成成功:', data);
     } catch (err) {
-      console.error('短链接生成错误:', err);
       setError(err instanceof Error ? err.message : '生成短链接时发生错误');
     } finally {
       setLoading(false);
@@ -71,7 +65,6 @@ export default function UrlShortener() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('复制失败:', err);
       // 备用方案：选择文本
       const textArea = document.createElement('textarea');
       textArea.value = text;

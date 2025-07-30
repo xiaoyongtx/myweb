@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
     // 获取当前用户
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    console.log('Auth check:', { user: user?.id, error: authError });
     
     if (authError) {
       return NextResponse.json({ 

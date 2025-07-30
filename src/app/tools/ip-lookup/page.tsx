@@ -35,7 +35,6 @@ export default function IPLookup() {
 
   // 获取用户的公网IP信息
   const fetchIPInfo = async (ip?: string) => {
-    console.log('开始查询IP:', ip || '当前用户IP');
     setLoading(true);
     setError('');
     
@@ -62,13 +61,11 @@ export default function IPLookup() {
             errorMessage = errorData.error;
           }
         } catch (e) {
-          console.error('解析错误响应失败:', e);
         }
         throw new Error(errorMessage);
       }
       
       const data = await response.json();
-      console.log('API响应数据:', data);
       
       const ipInfoData: IPInfo = {
         ip: data.ip || ip || '未知',
@@ -103,7 +100,6 @@ export default function IPLookup() {
         setError(`${data.error}`);
       }
     } catch (err) {
-      console.error('IP查询错误:', err);
       if (err instanceof Error && err.name === 'AbortError') {
         setError('查询超时，请稍后再试');
       } else {
@@ -149,7 +145,6 @@ export default function IPLookup() {
 
   // 重新获取当前IP
   const refreshCurrentIP = () => {
-    console.log('点击了我的IP按钮');
     setCustomIP('');
     setIpInfo(null);
     fetchIPInfo();
