@@ -4,18 +4,18 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createSupabaseServerClient(request);
-    
+
     // 获取当前用户
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    
+
+
     if (authError) {
-      return NextResponse.json({ 
-        error: '认证错误', 
-        details: authError.message 
+      return NextResponse.json({
+        error: '认证错误',
+        details: authError.message
       }, { status: 401 });
     }
-    
+
     if (!user) {
       return NextResponse.json({ error: '未授权访问' }, { status: 401 });
     }
@@ -24,13 +24,43 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const platform = searchParams.get('platform');
     const search = searchParams.get('search');
+    const page = parseInt(searchParams.get('page') || '1');
+    const pageSize = parseInt(searchParams.get('pageSize') || '20');
 
-    // 构建查询
+    // 计算分页参数
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // 构建查询 - 先获取总数
+    let countQuery = supabase
+      .from('netdisk_links')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    // 添加平台筛选到计数查询
+    if (platform) {
+      countQuery = countQuery.eq('platform', platform);
+    }
+
+    // 添加搜索筛选到计数查询
+    if (search) {
+      countQuery = countQuery.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    const { count, error: countError } = await countQuery;
+
+    if (countError) {
+      console.error('Error counting netdisk links:', countError);
+      return NextResponse.json({ error: '获取链接总数失败' }, { status: 500 });
+    }
+
+    // 构建数据查询
     let query = supabase
       .from('netdisk_links')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     // 添加平台筛选
     if (platform) {
@@ -49,7 +79,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: '获取链接失败' }, { status: 500 });
     }
 
-    return NextResponse.json({ links });
+    // 计算分页信息
+    const totalPages = Math.ceil((count || 0) / pageSize);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return NextResponse.json({
+      links,
+      pagination: {
+        page,
+        pageSize,
+        total: count || 0,
+        totalPages,
+        hasNextPage,
+        hasPrevPage
+      }
+    });
   } catch (error) {
     console.error('Error in GET /api/netdisk-links:', error);
     return NextResponse.json({ error: '服务器错误' }, { status: 500 });
@@ -59,10 +104,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createSupabaseServerClient(request);
-    
+
     // 获取当前用户
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: '未授权访问' }, { status: 401 });
     }
@@ -100,10 +145,10 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createSupabaseServerClient(request);
-    
+
     // 获取当前用户
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: '未授权访问' }, { status: 401 });
     }

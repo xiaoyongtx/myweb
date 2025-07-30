@@ -191,6 +191,15 @@ const parseNetdiskText = (text: string): Partial<NetdiskLink>[] => {
   return results;
 };
 
+interface PaginationInfo {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
 export default function NetdiskManager() {
   const { user, loading: userLoading } = useUser();
   const [links, setLinks] = useState<NetdiskLink[]>([]);
@@ -199,9 +208,17 @@ export default function NetdiskManager() {
   const [selectedPlatform, setSelectedPlatform] = useState('');
   const [selectedLinks, setSelectedLinks] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    page: 1,
+    pageSize: 20,
+    total: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPrevPage: false
+  });
   
   // 从数据库加载数据
-  const loadLinks = useCallback(async () => {
+  const loadLinks = useCallback(async (resetPage = false) => {
     if (!user) {
       setLinks([]);
       setLoading(false);
@@ -209,16 +226,26 @@ export default function NetdiskManager() {
     }
 
     try {
+      const currentPage = resetPage ? 1 : pagination.page;
       const params = new URLSearchParams();
       if (selectedPlatform) params.append('platform', selectedPlatform);
       if (searchTerm) params.append('search', searchTerm);
+      params.append('page', currentPage.toString());
+      params.append('pageSize', pagination.pageSize.toString());
 
       const response = await fetch(`/api/netdisk-links?${params.toString()}`);
       const data = await response.json();
 
-
       if (response.ok) {
         setLinks(data.links || []);
+        setPagination(data.pagination || {
+          page: currentPage,
+          pageSize: pagination.pageSize,
+          total: 0,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPrevPage: false
+        });
       } else {
         toast.error(data.error || '加载链接失败');
       }
@@ -227,13 +254,19 @@ export default function NetdiskManager() {
     } finally {
       setLoading(false);
     }
-  }, [user, selectedPlatform, searchTerm]);
+  }, [user, selectedPlatform, searchTerm, pagination.page, pagination.pageSize]);
 
   useEffect(() => {
     if (!userLoading) {
-      loadLinks();
+      loadLinks(true); // 重置到第一页
     }
-  }, [user, userLoading, selectedPlatform, searchTerm, loadLinks]);
+  }, [user, userLoading, selectedPlatform, searchTerm]);
+
+  useEffect(() => {
+    if (!userLoading && user) {
+      loadLinks(); // 不重置页码
+    }
+  }, [pagination.page, pagination.pageSize]);
   
   // 添加链接
   const addLinks = async () => {
@@ -276,7 +309,7 @@ export default function NetdiskManager() {
       if (response.ok) {
         setInputText('');
         toast.success(`成功添加 ${newLinks.length} 个链接`);
-        await loadLinks(); // 重新加载数据
+        await loadLinks(true); // 重新加载数据，重置到第一页
       } else {
         toast.error(data.error || '保存链接失败');
       }
@@ -337,10 +370,10 @@ export default function NetdiskManager() {
 
   // 全选/取消全选
   const toggleSelectAll = () => {
-    if (selectedLinks.length === filteredLinks.length) {
+    if (selectedLinks.length === links.length) {
       setSelectedLinks([]);
     } else {
-      setSelectedLinks(filteredLinks.map(link => link.id));
+      setSelectedLinks(links.map(link => link.id));
     }
   };
 
@@ -361,11 +394,39 @@ export default function NetdiskManager() {
     });
   };
   
-  // 获取所有平台
-  const platforms = Array.from(new Set(links.map(link => link.platform)));
+  // 获取所有平台（这里需要从所有数据中获取，而不是当前页）
+  const [allPlatforms, setAllPlatforms] = useState<string[]>([]);
   
-  // 由于搜索和筛选已经在API层面处理，这里直接使用links
-  const filteredLinks = links;
+  // 加载所有平台选项
+  const loadPlatforms = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      const response = await fetch('/api/netdisk-links?pageSize=1000'); // 获取足够多的数据来提取平台
+      const data = await response.json();
+      if (response.ok) {
+        const platforms = Array.from(new Set(data.links?.map((link: NetdiskLink) => link.platform).filter(Boolean) || [])) as string[];
+        setAllPlatforms(platforms);
+      }
+    } catch (error) {
+      // 静默处理错误
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!userLoading && user) {
+      loadPlatforms();
+    }
+  }, [user, userLoading, loadPlatforms]);
+
+  // 分页控制函数
+  const goToPage = (page: number) => {
+    setPagination(prev => ({ ...prev, page }));
+  };
+
+  const changePageSize = (pageSize: number) => {
+    setPagination(prev => ({ ...prev, pageSize, page: 1 }));
+  };
 
   // 如果用户未登录，显示登录提示
   if (!userLoading && !user) {
@@ -499,7 +560,7 @@ export default function NetdiskManager() {
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="">全部平台</option>
-              {platforms.map(platform => (
+              {allPlatforms.map(platform => (
                 <option key={platform} value={platform}>{platform}</option>
               ))}
             </select>
@@ -517,8 +578,10 @@ export default function NetdiskManager() {
           </div>
         </div>
         
-        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-          {loading ? '加载中...' : `共 ${links.length} 个链接，显示 ${filteredLinks.length} 个`}
+        <div className="mt-4">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {loading ? '加载中...' : `共 ${pagination.total} 个链接，当前显示第 ${pagination.page} 页，每页 ${pagination.pageSize} 条`}
+          </div>
         </div>
       </div>
 
@@ -528,10 +591,10 @@ export default function NetdiskManager() {
           <div className="text-center py-12">
             <div className="text-gray-500 dark:text-gray-400">加载中...</div>
           </div>
-        ) : filteredLinks.length === 0 ? (
+        ) : links.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-500 dark:text-gray-400">
-              {links.length === 0 ? '还没有添加任何链接' : '没有找到匹配的链接'}
+              {pagination.total === 0 ? '还没有添加任何链接' : '没有找到匹配的链接'}
             </div>
           </div>
         ) : (
@@ -542,7 +605,7 @@ export default function NetdiskManager() {
                   <th className="px-6 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={selectedLinks.length === filteredLinks.length && filteredLinks.length > 0}
+                      checked={selectedLinks.length === links.length && links.length > 0}
                       onChange={toggleSelectAll}
                       className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
@@ -568,7 +631,7 @@ export default function NetdiskManager() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredLinks.map(link => (
+                {links.map(link => (
                   <tr key={link.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <input
@@ -644,6 +707,151 @@ export default function NetdiskManager() {
           </div>
         )}
       </div>
+
+      {/* 分页导航 */}
+      {!loading && links.length > 0 && pagination.totalPages > 1 && (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-4 mt-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-sm text-gray-700 dark:text-gray-300 text-center sm:text-left">
+              显示第 {((pagination.page - 1) * pagination.pageSize) + 1} 到 {Math.min(pagination.page * pagination.pageSize, pagination.total)} 条，共 {pagination.total} 条记录
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* 每页显示选择 */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">每页显示：</label>
+                <select
+                  value={pagination.pageSize}
+                  onChange={(e) => changePageSize(parseInt(e.target.value))}
+                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                >
+                  <option value={20}>20条</option>
+                  <option value={50}>50条</option>
+                  <option value={100}>100条</option>
+                </select>
+              </div>
+              
+              {/* 分页控件 */}
+              <div className="flex items-center space-x-2">
+                {/* 上一页 */}
+                <button
+                  onClick={() => goToPage(pagination.page - 1)}
+                  disabled={!pagination.hasPrevPage}
+                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  上一页
+                </button>
+              
+              {/* 页码 */}
+              <div className="flex items-center space-x-1">
+                {(() => {
+                  const pages = [];
+                  const totalPages = pagination.totalPages;
+                  const currentPage = pagination.page;
+                  
+                  if (totalPages <= 7) {
+                    // 如果总页数小于等于7，显示所有页码
+                    for (let i = 1; i <= totalPages; i++) {
+                      pages.push(
+                        <button
+                          key={i}
+                          onClick={() => goToPage(i)}
+                          className={`px-3 py-2 text-sm font-medium rounded-md ${
+                            i === currentPage
+                              ? 'text-white bg-indigo-600 border border-indigo-600'
+                              : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {i}
+                        </button>
+                      );
+                    }
+                  } else {
+                    // 复杂分页逻辑
+                    // 始终显示第一页
+                    pages.push(
+                      <button
+                        key={1}
+                        onClick={() => goToPage(1)}
+                        className={`px-3 py-2 text-sm font-medium rounded-md ${
+                          1 === currentPage
+                            ? 'text-white bg-indigo-600 border border-indigo-600'
+                            : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        1
+                      </button>
+                    );
+                    
+                    // 如果当前页距离第一页较远，显示省略号
+                    if (currentPage > 4) {
+                      pages.push(
+                        <span key="ellipsis1" className="px-2 py-2 text-sm text-gray-500 dark:text-gray-400">...</span>
+                      );
+                    }
+                    
+                    // 显示当前页附近的页码
+                    const startPage = Math.max(2, currentPage - 1);
+                    const endPage = Math.min(totalPages - 1, currentPage + 1);
+                    
+                    for (let i = startPage; i <= endPage; i++) {
+                      pages.push(
+                        <button
+                          key={i}
+                          onClick={() => goToPage(i)}
+                          className={`px-3 py-2 text-sm font-medium rounded-md ${
+                            i === currentPage
+                              ? 'text-white bg-indigo-600 border border-indigo-600'
+                              : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {i}
+                        </button>
+                      );
+                    }
+                    
+                    // 如果当前页距离最后一页较远，显示省略号
+                    if (currentPage < totalPages - 3) {
+                      pages.push(
+                        <span key="ellipsis2" className="px-2 py-2 text-sm text-gray-500 dark:text-gray-400">...</span>
+                      );
+                    }
+                    
+                    // 始终显示最后一页
+                    if (totalPages > 1) {
+                      pages.push(
+                        <button
+                          key={totalPages}
+                          onClick={() => goToPage(totalPages)}
+                          className={`px-3 py-2 text-sm font-medium rounded-md ${
+                            totalPages === currentPage
+                              ? 'text-white bg-indigo-600 border border-indigo-600'
+                              : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {totalPages}
+                        </button>
+                      );
+                    }
+                  }
+                  
+                  return pages;
+                })()}
+                </div>
+                
+                {/* 下一页 */}
+                <button
+                  onClick={() => goToPage(pagination.page + 1)}
+                  disabled={!pagination.hasNextPage}
+                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  下一页
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 使用说明 */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-8">
