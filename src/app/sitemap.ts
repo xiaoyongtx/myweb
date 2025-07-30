@@ -16,6 +16,7 @@ const tools = [
   { id: 'qr-batch-generator', priority: 0.7, changeFreq: 'monthly' },
   { id: 'image-merger', priority: 0.6, changeFreq: 'monthly' },
   { id: 'image-splitter', priority: 0.6, changeFreq: 'monthly' },
+  { id: 'image-watermark', priority: 0.6, changeFreq: 'monthly' },
   { id: 'image-to-pdf', priority: 0.6, changeFreq: 'monthly' },
   { id: 'pdf-tools', priority: 0.6, changeFreq: 'monthly' },
   { id: 'signature-generator', priority: 0.6, changeFreq: 'monthly' },

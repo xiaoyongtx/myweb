@@ -14,35 +14,19 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: 'zh-CN',
     icons: [
       {
-        src: '/icon-192x192.png',
+        src: '/images/icon.jpg',
         sizes: '192x192',
-        type: 'image/png',
-        purpose: 'maskable'
+        type: 'image/jpeg'
       },
       {
-        src: '/icon-512x512.png',
+        src: '/images/icon.jpg',
         sizes: '512x512',
-        type: 'image/png',
-        purpose: 'maskable'
+        type: 'image/jpeg'
       },
       {
-        src: '/apple-touch-icon.png',
+        src: '/images/icon.jpg',
         sizes: '180x180',
-        type: 'image/png'
-      }
-    ],
-    screenshots: [
-      {
-        src: '/screenshot-wide.png',
-        sizes: '1280x720',
-        type: 'image/png',
-        form_factor: 'wide'
-      },
-      {
-        src: '/screenshot-narrow.png',
-        sizes: '720x1280',
-        type: 'image/png',
-        form_factor: 'narrow'
+        type: 'image/jpeg'
       }
     ]
   }

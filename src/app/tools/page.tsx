@@ -9,7 +9,8 @@ const categories = {
   image: { name: '图像处理', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' },
   network: { name: '网络工具', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' },
   productivity: { name: '效率工具', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' },
-  document: { name: '文档工具', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }
+  document: { name: '文档工具', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' },
+  game: { name: '休闲游戏', color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300' }
 };
 
 // 模拟工具数据
@@ -236,6 +237,28 @@ const tools = [
     ),
   },
   {
+    id: 'image-watermark',
+    name: '图片加水印',
+    description: '为图片添加铺满式文字或图片水印，支持倾斜角度、透明度和间距调节。',
+    category: 'image',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+        />
+      </svg>
+    ),
+  },
+  {
     id: 'image-merger',
     name: '图片合并',
     description: '将多张图片合并为一张，支持网格、水平、垂直三种布局模式。',
@@ -433,6 +456,28 @@ const tools = [
       </svg>
     ),
   },
+  {
+    id: 'gem-crush',
+    name: '梦幻宝石消消乐',
+    description: '精美的梦幻主题三消游戏，支持连击特效、特殊宝石和多关卡挑战，休闲娱乐必备。',
+    category: 'game',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function Tools() {
@@ -455,7 +500,7 @@ export default function Tools() {
           AI编程工具库
         </h1>
         <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400 sm:mt-4">
-          用AI编程开发实用工具，助力你的创作效率、能力提升、商化复利
+          用AI编程开发实用工具和休闲游戏，助力你的创作效率、能力提升、商化复利
         </p>
       </div>
 

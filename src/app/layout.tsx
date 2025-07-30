@@ -96,6 +96,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
+        {/* Favicon */}
+        <link rel="icon" href="/images/icon.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/images/icon.jpg" />
+        
         {/* PWA相关 */}
         <meta name="theme-color" content="#4f46e5" />
         <meta name="msapplication-TileColor" content="#4f46e5" />

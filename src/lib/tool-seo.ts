@@ -262,6 +262,26 @@ export const toolSeoTemplates = {
     }
   },
 
+  'image-watermark': {
+    title: "图片加水印工具【免费在线】铺满式文字/图片水印支持倾斜角度",
+    description: "💧专业图片水印添加工具！支持铺满式文字水印、图片水印，文字可调倾斜角度，透明度可调，版权保护必备，完全免费无水印输出。",
+    keywords: [
+      "图片加水印工具", "在线水印添加", "铺满式水印制作", "倾斜文字水印",
+      "照片加水印", "版权保护工具", "水印生成器", "透明水印制作",
+      "重复水印", "图片版权保护", "水印编辑器", "免费水印工具"
+    ],
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "图片水印添加工具",
+      "applicationCategory": "MultimediaApplication",
+      "description": "专业的铺满式图片水印添加和版权保护工具",
+      "featureList": ["铺满式文字水印", "倾斜角度调节", "图片水印", "透明度调节", "间距自定义"],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "22000" }
+    }
+  },
+
   'image-to-pdf': {
     title: "图片转PDF工具【批量转换】JPG/PNG转PDF在线免费工具",
     description: "📄专业图片转PDF工具！支持JPG、PNG、WebP等格式批量转换，自定义页面大小，调整图片顺序，生成高质量PDF文档，完全免费。",
@@ -379,6 +399,28 @@ export const toolSeoTemplates = {
       "featureList": ["链接保存", "分类管理", "批量操作", "失效检测", "云端同步"],
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
       "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "35000" }
+    }
+  },
+
+  'gem-crush': {
+    title: "梦幻宝石消消乐【免费在线】经典三消游戏支持连击特效",
+    description: "✨精美的梦幻宝石消消乐游戏！经典三消玩法，魔法特效，连击奖励，多关卡挑战，支持特殊宝石组合，休闲娱乐必备，完全免费在线游戏。",
+    keywords: [
+      "梦幻宝石消消乐", "三消游戏在线", "宝石消除游戏", "免费消消乐游戏",
+      "在线休闲游戏", "魔法宝石游戏", "连击消除游戏", "关卡挑战游戏",
+      "特效消消乐", "网页小游戏", "益智消除游戏", "宝石匹配游戏"
+    ],
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "Game",
+      "name": "梦幻宝石消消乐",
+      "applicationCategory": "Game",
+      "description": "精美的梦幻主题三消游戏，支持连击特效和特殊宝石",
+      "featureList": ["经典三消", "魔法特效", "连击奖励", "多关卡", "特殊宝石"],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "12000" },
+      "genre": "Puzzle",
+      "playMode": "SinglePlayer"
     }
   }
 };

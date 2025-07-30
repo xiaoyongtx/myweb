@@ -20,7 +20,17 @@ const relatedTools = {
   'image-compressor': [
     { id: 'image-merger', name: '图片合并', description: '合并多张图片' },
     { id: 'image-splitter', name: '图片分割', description: '分割图片' },
+    { id: 'image-watermark', name: '图片加水印', description: '为图片添加水印' },
+  ],
+  'image-watermark': [
+    { id: 'image-compressor', name: '图片压缩', description: '压缩图片大小' },
+    { id: 'image-merger', name: '图片合并', description: '合并多张图片' },
     { id: 'image-to-pdf', name: '图片转PDF', description: '将图片转换为PDF' },
+  ],
+  'image-splitter': [
+    { id: 'image-merger', name: '图片合并', description: '合并多张图片' },
+    { id: 'image-watermark', name: '图片加水印', description: '为图片添加水印' },
+    { id: 'image-compressor', name: '图片压缩', description: '压缩图片大小' },
   ],
   'qr-generator': [
     { id: 'qr-batch-generator', name: '批量二维码', description: '批量生成二维码' },
