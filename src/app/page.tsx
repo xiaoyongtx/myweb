@@ -1,33 +1,45 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import { seoConfig } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "借助AI提效放大商业化 | 一人企业复利商业化 - 小勇同学",
-  description: "探索《一人企业复利商业化》模式，通过持续价值输出、副业项目实战、复利内容产品、AI工具，构建可持续的商业化生态体系。借助AI提效，实现个人商业价值的复利增长。",
-  keywords: [
-    "一人企业", "复利商业化", "AI提效", "副业项目", "闲鱼项目", "价值输出",
-    "内容产品", "商业化模式", "个人品牌", "AI工具", "小勇同学", "复利增长",
-    "Solo Business", "AI Efficiency", "Side Project", "Content Product",
-    "Business Model", "Personal Brand", "Compound Growth", "Value Creation"
-  ],
+  title: seoConfig.title.default,
+  description: seoConfig.description,
+  keywords: seoConfig.keywords,
+  authors: seoConfig.authors,
+  creator: seoConfig.creator,
+  publisher: seoConfig.publisher,
+  robots: seoConfig.robots,
   openGraph: {
-    title: "借助AI提效放大商业化 | 一人企业复利商业化",
-    description: "探索《一人企业复利商业化》模式，通过AI工具提效，实现个人商业价值的复利增长",
-    type: "website",
-    url: "https://myweb.vercel.app",
+    ...seoConfig.openGraph,
+    title: "编程工具箱 | 开发者必备的在线工具集合 - 小勇同学",
+    description: seoConfig.description,
+    url: seoConfig.siteUrl,
   },
   twitter: {
-    card: "summary_large_image",
-    title: "借助AI提效放大商业化 | 一人企业复利商业化",
-    description: "探索《一人企业复利商业化》模式，通过AI工具提效，实现个人商业价值的复利增长",
+    ...seoConfig.twitter,
+    title: "编程工具箱 | 开发者必备的在线工具集合",
+    description: seoConfig.description,
   },
   alternates: {
-    canonical: "https://myweb.vercel.app",
+    canonical: seoConfig.siteUrl,
   },
 };
 
 export default function Home() {
   const jsonLd = {
+    ...seoConfig.structuredData.organization,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${seoConfig.siteUrl}/tools?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  const appJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: '开发者工具箱',
@@ -67,6 +79,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
       />
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">

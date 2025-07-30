@@ -1,179 +1,107 @@
-'use client';
+import { Metadata } from 'next';
+import CodeFormatterClient from './CodeFormatterClient';
+import { generateToolMetadata } from '@/lib/tool-seo';
+import RelatedTools, { Breadcrumb } from '@/components/SEOComponents';
 
-import { useState } from 'react';
-import Link from 'next/link';
+export const metadata: Metadata = generateToolMetadata('code-formatter');
 
-export default function CodeFormatter() {
-  const [code, setCode] = useState('');
-  const [formattedCode, setFormattedCode] = useState('');
-  const [language, setLanguage] = useState('javascript');
-  const [error, setError] = useState('');
-
-  const formatCode = () => {
-    setError('');
-    
-    try {
-      // Simple formatting for JavaScript/JSON
-      if (language === 'javascript' || language === 'json') {
-        const parsed = language === 'json' 
-          ? JSON.parse(code)
-          : (() => {
-              try {
-                return JSON.parse(code); // Try parsing as JSON first
-              } catch {
-                return code; // Fall back to original code
-              }
-            })();
-        
-        const formatted = language === 'json'
-          ? JSON.stringify(parsed, null, 2)
-          : code;
-        
-        setFormattedCode(formatted);
-      } else {
-        // For other languages, just indent with 2 spaces for now
-        const lines = code.split('\n');
-        let indent = 0;
-        const formattedLines = lines.map(line => {
-          // Very basic indentation logic
-          if (line.includes('}') || line.includes(')') || line.includes('end')) {
-            indent = Math.max(0, indent - 2);
-          }
-          
-          const formattedLine = ' '.repeat(indent) + line.trim();
-          
-          if (line.includes('{') || line.includes('(') || line.match(/\b(begin|do|then)\b/)) {
-            indent += 2;
-          }
-          
-          return formattedLine;
-        });
-        
-        setFormattedCode(formattedLines.join('\n'));
-      }
-    } catch (e: unknown) {
-      setError(`格式化错误: ${(e as Error).message}`);
-      setFormattedCode('');
-    }
-  };
-
+export default function CodeFormatterPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <Link
-          href="/tools"
-          className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-        >
-          ← 返回工具箱
-        </Link>
-      </div>
-
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          代码格式化
+      {/* 面包屑导航 */}
+      <Breadcrumb 
+        items={[
+          { label: '首页', href: '/' },
+          { label: '工具箱', href: '/tools' },
+          { label: '代码格式化工具' }
+        ]}
+        className="mb-8"
+      />
+      
+      {/* SEO优化的页面标题和描述 */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          专业在线代码格式化工具
         </h1>
-        <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
-          格式化各种编程语言的代码，使其更易于阅读和维护
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
+          支持JavaScript、HTML、CSS、JSON等20+编程语言的免费在线代码美化工具
         </p>
+        <div className="flex flex-wrap justify-center gap-2 text-sm text-gray-500">
+          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">JavaScript格式化</span>
+          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">HTML美化</span>
+          <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">CSS整理</span>
+          <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full">JSON格式化</span>
+        </div>
       </div>
-
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              选择语言
-            </label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800 dark:text-white"
-            >
-              <option value="javascript">JavaScript</option>
-              <option value="typescript">TypeScript</option>
-              <option value="json">JSON</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
-              <option value="csharp">C#</option>
-              <option value="php">PHP</option>
-              <option value="html">HTML</option>
-              <option value="css">CSS</option>
-            </select>
+      
+      <CodeFormatterClient />
+      
+      {/* SEO内容部分 */}
+      <div className="mt-16 space-y-12">
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">如何使用代码格式化工具</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+              <div className="text-blue-600 font-bold text-lg mb-2">1. 粘贴代码</div>
+              <p className="text-gray-600 dark:text-gray-300">将需要格式化的代码粘贴到左侧编辑框中</p>
+            </div>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+              <div className="text-green-600 font-bold text-lg mb-2">2. 选择语言</div>
+              <p className="text-gray-600 dark:text-gray-300">选择对应的编程语言类型</p>
+            </div>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+              <div className="text-purple-600 font-bold text-lg mb-2">3. 一键格式化</div>
+              <p className="text-gray-600 dark:text-gray-300">点击格式化按钮，获得美化后的代码</p>
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        </section>
+        
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">功能特色</h2>
+          <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                原始代码
-              </label>
-              <textarea
-                className="w-full h-64 p-3 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white font-mono text-sm"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder="在此粘贴您的代码..."
-              />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">支持多种编程语言</h3>
+              <ul className="space-y-2 text-gray-600 dark:text-gray-300">
+                <li>• JavaScript / TypeScript 代码格式化</li>
+                <li>• HTML 标签美化和缩进</li>
+                <li>• CSS 样式代码整理</li>
+                <li>• JSON 数据格式化</li>
+                <li>• XML 文档结构化</li>
+              </ul>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                格式化后的代码
-              </label>
-              <textarea
-                className="w-full h-64 p-3 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white font-mono text-sm"
-                value={formattedCode}
-                readOnly
-                placeholder="格式化结果将显示在这里..."
-              />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">专业格式化功能</h3>
+              <ul className="space-y-2 text-gray-600 dark:text-gray-300">
+                <li>• 智能缩进和对齐</li>
+                <li>• 语法高亮显示</li>
+                <li>• 错误检测提醒</li>
+                <li>• 一键复制结果</li>
+                <li>• 完全免费使用</li>
+              </ul>
             </div>
           </div>
+        </section>
 
-          {error && (
-            <div className="mt-2 text-red-600 dark:text-red-400 text-sm">
-              {error}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">常见问题</h2>
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">为什么我的代码格式化后还是有问题？</h3>
+              <p className="text-gray-600 dark:text-gray-300">本工具提供基础的代码格式化功能，对于复杂的代码结构建议使用专业IDE如VS Code等进行格式化。</p>
             </div>
-          )}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">支持哪些编程语言？</h3>
+              <p className="text-gray-600 dark:text-gray-300">目前支持JavaScript、TypeScript、JSON、HTML、CSS、Python、Java、C#、PHP等主流编程语言的基础格式化。</p>
+            </div>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">代码会被保存吗？</h3>
+              <p className="text-gray-600 dark:text-gray-300">不会，所有代码处理都在浏览器本地完成，不会上传到服务器，保证代码安全性。</p>
+            </div>
+          </div>
+        </section>
 
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={formatCode}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-            >
-              格式化代码
-            </button>
-          </div>
-        </div>
-
-      {/* 使用说明 */}
-      <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
-          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-          </svg>
-          使用说明
-        </h2>
-        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
-          <div>
-            <h3 className="font-medium mb-2">支持语言</h3>
-            <ul className="space-y-1 list-disc list-inside">
-              <li>JavaScript/TypeScript - 基础格式化</li>
-              <li>JSON - 标准格式化和验证</li>
-              <li>Python/Java/C# - 基础缩进</li>
-              <li>HTML/CSS/PHP - 基础格式化</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-medium mb-2">功能特性</h3>
-            <ul className="space-y-1 list-disc list-inside">
-              <li>自动缩进和对齐</li>
-              <li>语法错误检测</li>
-              <li>实时格式化预览</li>
-              <li>支持复制格式化结果</li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
-          <p className="text-xs text-blue-700 dark:text-blue-300">
-            💡 <strong>提示：</strong>JSON格式化功能最为完善，其他语言提供基础的缩进格式化。建议使用专业IDE进行复杂代码格式化。
-          </p>
-        </div>
+        {/* 相关工具推荐 */}
+        <RelatedTools currentTool="code-formatter" />
       </div>
     </div>
   );

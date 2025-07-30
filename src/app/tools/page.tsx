@@ -455,7 +455,7 @@ export default function Tools() {
           AI编程工具库
         </h1>
         <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400 sm:mt-4">
-          智能化编程工具集合，助力开发者高效编程
+          用AI编程开发实用工具，助力你的创作效率、能力提升、商化复利
         </p>
       </div>
 
