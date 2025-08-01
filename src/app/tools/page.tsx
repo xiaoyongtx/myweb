@@ -550,6 +550,34 @@ const tools = [
       </svg>
     ),
   },
+  {
+    id: 'qr-live-code',
+    name: '二维码活码工具',
+    description: '上传多张二维码图片，设置展示时长，生成动态GIF活码，支持时长精确控制和顺序调整。',
+    category: 'image',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2M7 4h10M7 4l-2 14h14l-2-14M11 10h2M9 14h6"
+        />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 6V4m0 2v2m0-2h2m-2 0H10"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function Tools() {
