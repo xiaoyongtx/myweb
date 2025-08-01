@@ -551,6 +551,28 @@ const tools = [
     ),
   },
   {
+    id: 'pinyin',
+    name: '中文转拼音',
+    description: '输入中文文本，自动转换为带声调的拼音和拼音缩写，支持一键复制功能。',
+    category: 'text',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+        />
+      </svg>
+    ),
+  },
+  {
     id: 'qr-live-code',
     name: '二维码活码工具',
     description: '上传多张二维码图片，设置展示时长，生成动态GIF活码，支持时长精确控制和顺序调整。',

@@ -21,6 +21,7 @@
     "next": "15.3.5",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.54",
+    "pinyin-pro": "^3.26.0",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
