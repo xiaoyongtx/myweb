@@ -104,7 +104,7 @@ export default function Home() {
               href="/tools"
               className="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
-              探索我的项目
+              探索工具库
               <svg
                 className="ml-2 h-5 w-5"
                 fill="none"
