@@ -622,6 +622,28 @@ const tools = [
       </svg>
     ),
   },
+  {
+    id: 'html-share',
+    name: 'HTML分享工具',
+    description: '编写HTML代码，实时预览效果，一键发布分享给他人访问。支持CSS样式和JavaScript脚本。',
+    category: 'text',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function Tools() {
