@@ -59,14 +59,7 @@ export default function CodeFormatterClient() {
 
   return (
     <div>
-      <div className="mb-8">
-        <Link
-          href="/tools"
-          className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-        >
-          ← 返回工具箱
-        </Link>
-      </div>
+
 
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 rounded-lg shadow-md">
           <div className="mb-4">

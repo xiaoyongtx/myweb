@@ -1,23 +1,13 @@
 import { Metadata } from 'next';
 import CodeFormatterClient from './CodeFormatterClient';
 import { generateToolMetadata } from '@/lib/tool-seo';
-import RelatedTools, { Breadcrumb } from '@/components/SEOComponents';
+import RelatedTools from '@/components/SEOComponents';
 
 export const metadata: Metadata = generateToolMetadata('code-formatter');
 
 export default function CodeFormatterPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* 面包屑导航 */}
-      <Breadcrumb 
-        items={[
-          { label: '首页', href: '/' },
-          { label: '工具箱', href: '/tools' },
-          { label: '代码格式化工具' }
-        ]}
-        className="mb-8"
-      />
-      
       {/* SEO优化的页面标题和描述 */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -33,9 +23,9 @@ export default function CodeFormatterPage() {
           <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full">JSON格式化</span>
         </div>
       </div>
-      
+
       <CodeFormatterClient />
-      
+
       {/* SEO内容部分 */}
       <div className="mt-16 space-y-12">
         <section>
@@ -55,7 +45,7 @@ export default function CodeFormatterPage() {
             </div>
           </div>
         </section>
-        
+
         <section>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">功能特色</h2>
           <div className="grid md:grid-cols-2 gap-8">

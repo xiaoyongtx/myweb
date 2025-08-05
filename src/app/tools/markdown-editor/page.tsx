@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -97,14 +96,6 @@ print(f"总和: {result}")  # 输出: 总和: 15
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <Link
-          href="/tools"
-          className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-        >
-          ← 返回工具箱
-        </Link>
-      </div>
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import Link from 'next/link';
 
 interface SplitResult {
   canvas: HTMLCanvasElement;
@@ -254,14 +253,6 @@ export default function ImageSplitter() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <Link
-          href="/tools"
-          className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-        >
-          ← 返回工具箱
-        </Link>
-      </div>
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">

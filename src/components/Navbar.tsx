@@ -38,7 +38,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: '首页', path: '/' },
-    { name: '工具箱', path: '/tools' },
+    { name: '工具库', path: '/tools' },
   ];
 
   // 获取用户头像或生成默认头像
