@@ -444,7 +444,6 @@ export default function QRMosaic() {
               <li>支持多个二维码同时处理</li>
               <li>处理后的图片保持原始分辨率和质量</li>
               <li>可调节马赛克大小和扩展范围</li>
-              <li>支持拖拽上传，操作便捷</li>
             </ul>
           </div>
           <div>
@@ -462,21 +461,6 @@ export default function QRMosaic() {
               <li>处理完成后可直接下载保存图片</li>
             </ul>
           </div>
-        </div>
-        <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-800/30 rounded-lg">
-          <h3 className="font-medium mb-2 text-blue-900 dark:text-blue-100 flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            使用技巧
-          </h3>
-          <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200 list-disc list-inside">
-            <li>马赛克大小：数值越大，马赛克块越大，模糊效果越强</li>
-            <li>扩展范围：在二维码周围额外打码的像素范围，防止信息泄露</li>
-            <li>如果二维码较小或模糊，可能无法准确识别</li>
-            <li>处理前会显示检测到的二维码内容，确认后再进行打码</li>
-            <li>建议在处理敏感图片前先备份原图</li>
-          </ul>
         </div>
       </div>
 

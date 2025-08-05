@@ -201,30 +201,33 @@ export default function HtmlShareTool() {
     );
   }
 
-  if (!user) {
+  // 如果用户未登录，显示登录提示
+  if (!loading && !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
-              需要登录
-            </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              请登录后使用HTML分享工具
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+            HTML分享工具
+          </h1>
+          <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
+            编写HTML代码，实时预览效果，一键分享给他人
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-8 text-center">
+          <div className="text-gray-500 dark:text-gray-400 mb-4">
+            <svg className="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">需要登录</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              请先登录以使用HTML分享工具
             </p>
-          </div>
-          <div className="flex justify-center space-x-4">
             <Link
-              href="/auth/login"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              href={`/auth/login?redirect=${encodeURIComponent('/tools/html-share')}`}
+              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
             >
-              登录
-            </Link>
-            <Link
-              href="/auth/register"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
-            >
-              注册
+              立即登录
             </Link>
           </div>
         </div>

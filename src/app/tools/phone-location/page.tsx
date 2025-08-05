@@ -405,21 +405,6 @@ export default function PhoneLocation() {
             </div>
           </div>
         </div>
-        <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-800/30 rounded-lg">
-          <h3 className="font-medium mb-2 text-blue-900 dark:text-blue-100 flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            使用技巧
-          </h3>
-          <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200 list-disc list-inside">
-            <li>输入11位手机号码即可查询，支持键盘回车键快速查询</li>
-            <li>点击历史记录可快速重新查询，历史记录最多保存10条</li>
-            <li>不同运营商用不同颜色标识，便于快速识别</li>
-            <li>部分城市号段可显示具体的区号和邮编信息</li>
-            <li>查询结果基于号段数据库，准确率较高</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
