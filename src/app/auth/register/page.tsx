@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase';
+import { buildUrl } from '@/lib/utils';
 
 function RegisterForm() {
   const [email, setEmail] = useState('');
@@ -35,7 +36,7 @@ function RegisterForm() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: buildUrl('/auth/callback'),
         },
       });
 
