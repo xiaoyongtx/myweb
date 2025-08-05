@@ -156,7 +156,7 @@ export default function Home() {
                       90后奶爸，资深程序员。在国企上班，下班搞副业。
                     </p>
                     <p>
-                      2025年开启副业，做过很多实战项目，闲鱼项目，变现四位数。
+                      2025年开启副业，做过很多实战项目，闲鱼变现四位数。
                     </p>
                     <p>
                       深圳大冲私教学员，践行十年退休计划。
@@ -178,7 +178,7 @@ export default function Home() {
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">
                     <span className="font-medium text-gray-900 dark:text-white">核心业务：</span>
-                    公众号内容创作 + 闲鱼无货源电商 + AI编程工具开发
+                    公众号 + 闲鱼 + AI编程
                   </p>
                   <div className="flex flex-wrap gap-3 mb-8">
                     <span className="px-5 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 dark:from-indigo-900 dark:to-purple-900 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-700">

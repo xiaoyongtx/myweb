@@ -419,38 +419,28 @@ export default function ImageMerger() {
           </svg>
           使用说明
         </h2>
-        <div className="grid md:grid-cols-3 gap-6 text-sm text-blue-800 dark:text-blue-200">
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
           <div>
-            <h3 className="font-medium mb-2">网格合并</h3>
+            <h3 className="font-medium mb-2">合并模式</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li>按网格方式排列图片</li>
-              <li>可设置每行的列数</li>
-              <li>图片会自动换行排列</li>
-              <li>适合制作照片墙</li>
+              <li>网格合并 - 按网格排列，适合照片墙</li>
+              <li>水平合并 - 横向排列，适合横幅</li>
+              <li>垂直合并 - 纵向排列，适合长图</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-medium mb-2">水平合并</h3>
+            <h3 className="font-medium mb-2">使用方法</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li>图片横向排列</li>
-              <li>高度以最高图片为准</li>
-              <li>其他图片垂直居中</li>
-              <li>适合制作横幅图</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-medium mb-2">垂直合并</h3>
-            <ul className="space-y-1 list-disc list-inside">
-              <li>图片纵向排列</li>
-              <li>宽度以最宽图片为准</li>
-              <li>其他图片水平居中</li>
-              <li>适合制作长图</li>
+              <li>上传多张图片</li>
+              <li>选择合并模式</li>
+              <li>调整间距和背景色</li>
+              <li>拖拽调整图片顺序</li>
             </ul>
           </div>
         </div>
         <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
           <p className="text-xs text-blue-700 dark:text-blue-300">
-            💡 <strong>提示：</strong>可以通过拖拽图片上的箭头按钮来调整图片顺序，删除不需要的图片。
+            💡 <strong>提示：</strong>可拖拽箭头按钮调整图片顺序，点击删除按钮移除图片。
           </p>
         </div>
       </div>

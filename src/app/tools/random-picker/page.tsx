@@ -845,24 +845,15 @@ export default function RandomPicker() {
           </svg>
           使用说明
         </h2>
-        <div className="grid md:grid-cols-3 gap-6 text-sm text-blue-800 dark:text-blue-200">
+        <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
           <div>
-            <h3 className="font-medium mb-2">基本功能</h3>
+            <h3 className="font-medium mb-2">主要功能</h3>
             <ul className="space-y-1 list-disc list-inside">
               <li>添加和管理名单</li>
-              <li>随机公平点名</li>
-              <li>支持多轮点名</li>
-              <li>完整的历史记录</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-medium mb-2">高级功能</h3>
-            <ul className="space-y-1 list-disc list-inside">
-              <li>文本批量导入名单</li>
-              <li>Excel文件导入支持</li>
-              <li>JSON/Excel数据导出</li>
-              <li>排除已选中选项</li>
-              <li>自定义动画效果</li>
+              <li>随机公平选择</li>
+              <li>支持多轮选择</li>
+              <li>文本/Excel批量导入</li>
+              <li>数据导出功能</li>
             </ul>
           </div>
           <div>
@@ -872,6 +863,7 @@ export default function RandomPicker() {
               <li>会议发言安排</li>
               <li>活动抽奖</li>
               <li>团队分组</li>
+              <li>游戏选择</li>
             </ul>
           </div>
         </div>

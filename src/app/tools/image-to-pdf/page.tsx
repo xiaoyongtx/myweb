@@ -317,25 +317,25 @@ export default function ImageToPDF() {
           <div>
             <h3 className="font-medium mb-2">支持格式</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li>JPG、PNG、GIF、WebP等常见图片格式</li>
-              <li>支持A4、Letter和自定义页面大小</li>
-              <li>每张图片占用一页PDF</li>
-              <li>自动保持原始宽高比</li>
+              <li>JPG、PNG、GIF、WebP等格式</li>
+              <li>支持A4、Letter页面大小</li>
+              <li>每张图片一页PDF</li>
+              <li>保持原始宽高比</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-medium mb-2">操作说明</h3>
+            <h3 className="font-medium mb-2">使用方法</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li>点击或拖拽上传多张图片</li>
-              <li>可以调整图片顺序</li>
-              <li>设置页面大小和排版</li>
-              <li>一键转换并下载PDF</li>
+              <li>上传多张图片</li>
+              <li>调整图片顺序</li>
+              <li>设置页面大小</li>
+              <li>一键转换下载</li>
             </ul>
           </div>
         </div>
         <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
           <p className="text-xs text-blue-700 dark:text-blue-300">
-            💡 <strong>提示：</strong>图片会自动缩放以适应页面大小，建议使用高分辨率图片以获得更好的PDF质量。
+            💡 <strong>提示：</strong>建议使用高分辨率图片以获得更好的PDF质量。
           </p>
         </div>
       </div>

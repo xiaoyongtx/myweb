@@ -233,18 +233,18 @@ export default function PasswordGenerator() {
           <div>
             <h3 className="font-medium mb-2">字符类型</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li><strong>小写字母：</strong> a-z (26个字符)</li>
-              <li><strong>大写字母：</strong> A-Z (26个字符)</li>
-              <li><strong>数字：</strong> 0-9 (10个字符)</li>
-              <li><strong>特殊符号：</strong> 32个常用符号</li>
+              <li>小写字母 a-z</li>
+              <li>大写字母 A-Z</li>
+              <li>数字 0-9</li>
+              <li>特殊符号 !@#$%等</li>
             </ul>
           </div>
           <div>
             <h3 className="font-medium mb-2">安全建议</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li>建议密码长度至少12位</li>
-              <li>包含多种字符类型提高强度</li>
-              <li>可排除容易混淆的字符</li>
+              <li>建议长度至少12位</li>
+              <li>包含多种字符类型</li>
+              <li>可排除易混淆字符</li>
               <li>使用密码管理器保存</li>
             </ul>
           </div>

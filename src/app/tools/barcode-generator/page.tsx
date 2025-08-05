@@ -305,53 +305,30 @@ export default function BarcodeGenerator() {
         </h2>
         <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
           <div>
-            <h3 className="font-medium mb-3 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-              </svg>
-              支持的条形码格式
-            </h3>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Code 128:</strong> 最通用的条形码格式，支持数字、字母和符号</li>
-              <li><strong>EAN-13:</strong> 13位商品条形码，需要输入12位数字</li>
-              <li><strong>EAN-8:</strong> 8位商品条形码，需要输入7位数字</li>
-              <li><strong>Code 39:</strong> 支持数字、大写字母和部分符号</li>
-              <li><strong>ITF-14:</strong> 14位交叉二五码，仅支持偶数位数字</li>
-              <li><strong>MSI:</strong> 仅支持数字的条形码格式</li>
-              <li><strong>Pharmacode:</strong> 制药行业专用条形码</li>
+            <h3 className="font-medium mb-2">支持格式</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>Code 128 - 通用格式，支持数字、字母</li>
+              <li>EAN-13/EAN-8 - 商品条形码</li>
+              <li>Code 39 - 支持数字、大写字母</li>
+              <li>ITF-14 - 交叉二五码</li>
+              <li>MSI - 仅数字格式</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-medium mb-3 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              自定义设置
-            </h3>
-            <ul className="space-y-2 list-disc list-inside">
-              <li>输入内容后会自动生成条形码预览</li>
-              <li>可以调整条宽度、高度、颜色等样式参数</li>
-              <li>支持显示或隐藏条形码下方的文本</li>
-              <li>可自定义背景颜色和边距大小</li>
-              <li>实时预览所有参数调整效果</li>
+            <h3 className="font-medium mb-2">使用方法</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>输入内容自动生成预览</li>
+              <li>调整宽度、高度、颜色</li>
+              <li>可显示/隐藏文本标签</li>
+              <li>支持自定义背景和边距</li>
+              <li>点击下载或复制条形码</li>
             </ul>
           </div>
         </div>
-        <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-800/30 rounded-lg">
-          <h3 className="font-medium mb-2 text-blue-900 dark:text-blue-100 flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            使用技巧
-          </h3>
-          <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200 list-disc list-inside">
-            <li>EAN-13和EAN-8会自动计算校验码，只需输入前面的数字</li>
-            <li>Code 39格式的符号包括：-、.、空格、$、/、+、%</li>
-            <li>ITF-14格式要求输入偶数位数字（通常是14位）</li>
-            <li>生成的条形码可以下载为PNG格式图片</li>
-            <li>支持复制到剪贴板，方便在其他应用中使用</li>
-          </ul>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>EAN码会自动计算校验位，Code 39支持特殊符号：- . 空格 $ / + %
+          </p>
         </div>
       </div>
     </div>

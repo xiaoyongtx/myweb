@@ -922,26 +922,24 @@ export default function PDFTools() {
             <h3 className="font-medium mb-2">PDF合并</h3>
             <ul className="space-y-1 list-disc list-inside">
               <li>选择多个PDF文件</li>
-              <li>可调整文件合并顺序</li>
-              <li>支持在线预览每个文件</li>
-              <li>保持原始页面质量</li>
-              <li>自动生成合并后的文件</li>
+              <li>拖拽调整合并顺序</li>
+              <li>支持在线预览</li>
+              <li>保持原始质量</li>
             </ul>
           </div>
           <div>
             <h3 className="font-medium mb-2">PDF拆分</h3>
             <ul className="space-y-1 list-disc list-inside">
-              <li>按页数拆分：每N页一个文件</li>
-              <li>按范围拆分：指定具体页面</li>
-              <li>支持预览确认页面内容</li>
-              <li>支持复杂的页面范围设置</li>
-              <li>批量下载拆分后的文件</li>
+              <li>按页数拆分</li>
+              <li>按范围拆分</li>
+              <li>支持预览确认</li>
+              <li>批量下载文件</li>
             </ul>
           </div>
         </div>
         <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
           <p className="text-xs text-blue-700 dark:text-blue-300">
-            💡 <strong>提示：</strong>所有PDF处理都在浏览器本地完成，不会上传到服务器，保护您的文件隐私。点击预览按钮可以查看PDF内容。如果预览失败，可以点击"在新窗口打开"按钮使用浏览器内置的PDF查看器。
+            💡 <strong>提示：</strong>所有处理都在本地完成，不会上传到服务器。预览失败时可点击"在新窗口打开"。
           </p>
         </div>
       </div>

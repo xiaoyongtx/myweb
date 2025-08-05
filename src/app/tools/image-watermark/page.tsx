@@ -570,51 +570,30 @@ export default function ImageWatermark() {
         </h2>
         <div className="grid md:grid-cols-2 gap-6 text-sm text-blue-800 dark:text-blue-200">
           <div>
-            <h3 className="font-medium mb-3 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              文字水印
-            </h3>
-            <ul className="space-y-2 list-disc list-inside">
+            <h3 className="font-medium mb-2">文字水印</h3>
+            <ul className="space-y-1 list-disc list-inside">
               <li>输入水印文字内容</li>
-              <li>调节字体大小（12-100px）</li>
-              <li>选择字体颜色</li>
-              <li>设置倾斜角度（-90°到90°）</li>
-              <li>调节水印间距（50-300px）</li>
-              <li>水印会自动重复铺满整个图片</li>
+              <li>调节字体大小和颜色</li>
+              <li>设置倾斜角度</li>
+              <li>调节水印间距</li>
+              <li>自动重复铺满图片</li>
             </ul>
           </div>
           <div>
-            <h3 className="font-medium mb-3 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              图片水印
-            </h3>
-            <ul className="space-y-2 list-disc list-inside">
-              <li>上传PNG、JPG、JPEG、GIF格式图片</li>
-              <li>调节水印大小（10%-100%）</li>
-              <li>设置水印间距（20-200px）</li>
-              <li>水印会自动重复铺满整个图片</li>
-              <li>保持原始图片比例</li>
+            <h3 className="font-medium mb-2">图片水印</h3>
+            <ul className="space-y-1 list-disc list-inside">
+              <li>支持PNG、JPG等格式</li>
+              <li>调节水印大小</li>
+              <li>设置水印间距</li>
+              <li>保持原始比例</li>
+              <li>自动重复铺满</li>
             </ul>
           </div>
         </div>
-        <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-800/30 rounded-lg">
-          <h3 className="font-medium mb-2 text-blue-900 dark:text-blue-100 flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            使用技巧
-          </h3>
-          <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200 list-disc list-inside">
-            <li>透明度建议设置在30%-70%之间，既能保护版权又不影响图片观看</li>
-            <li>文字水印建议使用对比色，如深色图片用浅色水印</li>
-            <li>倾斜角度-45°是最常用的水印角度，不易被裁剪</li>
-            <li>水印间距过小会影响图片美观，建议根据图片大小调节</li>
-            <li>支持拖拽上传，可直接将图片拖到上传区域</li>
-          </ul>
+        <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-200 dark:border-blue-700">
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            💡 <strong>提示：</strong>透明度建议30%-70%，文字水印使用对比色，-45°角度不易被裁剪。
+          </p>
         </div>
       </div>
 
