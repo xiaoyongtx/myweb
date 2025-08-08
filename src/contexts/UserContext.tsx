@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 
 type UserContextType = {
@@ -33,7 +33,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createSupabaseClient();
 
   const fetchProfile = useCallback(async (userId: string) => {
     try {
@@ -46,6 +45,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error('Error fetching profile:', error);
+        setProfile(null);
         // 如果是因为表不存在或记录不存在，不要自动创建
         // 让用户手动创建个人资料
       } else {
@@ -53,35 +53,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error('Error in fetchProfile:', error);
+      setProfile(null);
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
-    // 获取当前会话
-    const getSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user || null);
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error getting session:', error);
-        setLoading(false);
-      }
-    };
-
-    getSession();
-
     // 监听认证状态变化
+    // Supabase 会在监听器注册时立即触发一次，包含当前会话状态
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_, session) => {
-        setUser(session?.user || null);
+      async (event, session) => {
+        setUser(session?.user ?? null);
         
         if (session?.user) {
           await fetchProfile(session.user.id);
@@ -95,7 +78,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchProfile, supabase.auth]);
+  }, [fetchProfile]);
 
   const refreshProfile = async () => {
     if (user) {

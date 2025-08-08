@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useUser } from '@/contexts/UserContext';
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -72,7 +72,6 @@ export default function HtmlShareTool() {
   const [loadingShares, setLoadingShares] = useState(false);
   
   const previewRef = useRef<HTMLIFrameElement>(null);
-  const supabase = createSupabaseClient();
 
   // 实时预览更新
   useEffect(() => {

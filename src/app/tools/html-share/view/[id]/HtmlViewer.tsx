@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -22,7 +22,6 @@ interface HtmlViewerProps {
 
 export default function HtmlViewer({ share }: HtmlViewerProps) {
   const [viewUpdated, setViewUpdated] = useState(false);
-  const supabase = createSupabaseClient();
 
   // 更新浏览次数
   useEffect(() => {

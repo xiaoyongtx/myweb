@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState('');
@@ -13,7 +13,6 @@ function ResetPasswordForm() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createSupabaseClient();
 
   // 检查是否有有效的重置令牌
   useEffect(() => {

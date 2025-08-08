@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -22,8 +22,6 @@ export default function BrowseHtmlShares() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'created_at' | 'view_count'>('created_at');
   
-  const supabase = createSupabaseClient();
-
   // 加载公开的分享列表
   const loadShares = async () => {
     setLoading(true);

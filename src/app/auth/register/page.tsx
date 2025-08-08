@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { buildUrl } from '@/lib/utils';
 
 function RegisterForm() {
@@ -14,7 +14,6 @@ function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createSupabaseClient();
   
   // 获取重定向URL
   const redirectUrl = searchParams.get('redirect') || '/';

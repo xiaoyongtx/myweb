@@ -1,4 +1,4 @@
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import HtmlViewer from './HtmlViewer';
@@ -21,8 +21,6 @@ interface PageProps {
 }
 
 async function getHtmlShare(id: string): Promise<HtmlShare | null> {
-  const supabase = createSupabaseClient();
-  
   try {
     const { data, error } = await supabase
       .from('html_shares')

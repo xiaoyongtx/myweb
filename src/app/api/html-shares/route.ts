@@ -1,8 +1,7 @@
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const supabase = createSupabaseClient();
   const { searchParams } = new URL(request.url);
   
   const type = searchParams.get('type'); // 'public' | 'my'
@@ -37,8 +36,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = createSupabaseClient();
-  
   try {
     const body = await request.json();
     const { title, html_content, description, is_public, user_id } = body;

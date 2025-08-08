@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -62,8 +63,6 @@ export default function ProfilePage() {
     setMessage({ type: '', text: '' });
     
     try {
-      const supabase = (await import('@/lib/supabase')).createSupabaseClient();
-      
       // 更新用户名
       const { error: profileError } = await supabase
         .from('profiles')
@@ -130,8 +129,6 @@ export default function ProfilePage() {
     setMessage({ type: '', text: '' });
     
     try {
-      const supabase = (await import('@/lib/supabase')).createSupabaseClient();
-      
       // 更新密码
       const { error } = await supabase.auth.updateUser({
         password: newPassword

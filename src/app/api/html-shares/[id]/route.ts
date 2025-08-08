@@ -1,4 +1,4 @@
-import { createSupabaseClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -10,7 +10,6 @@ export async function GET(
   { params }: RouteParams
 ) {
   const { id } = await params;
-  const supabase = createSupabaseClient();
   
   try {
     const { data, error } = await supabase
@@ -35,7 +34,6 @@ export async function PUT(
   { params }: RouteParams
 ) {
   const { id } = await params;
-  const supabase = createSupabaseClient();
   
   try {
     const body = await request.json();
@@ -70,7 +68,6 @@ export async function DELETE(
   { params }: RouteParams
 ) {
   const { id } = await params;
-  const supabase = createSupabaseClient();
   
   try {
     const { error } = await supabase
@@ -95,7 +92,6 @@ export async function PATCH(
   { params }: RouteParams
 ) {
   const { id } = await params;
-  const supabase = createSupabaseClient();
   
   try {
     const body = await request.json();
