@@ -5,7 +5,7 @@
   "description": "个人网站，包含登录注册、文章发布和工具箱功能",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 next build",
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next"
