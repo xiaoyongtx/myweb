@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
-import { buildUrl } from '@/lib/utils';
+import { sendPasswordResetEmail, validateEmail } from '@/lib/auth';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -16,21 +15,49 @@ export default function ForgotPassword() {
     e.preventDefault();
     setError(null);
     setMessage(null);
+
+    // 验证邮箱格式
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: buildUrl('/auth/reset-password'),
-      });
+      const { error } = await sendPasswordResetEmail(email);
 
       if (error) {
-        throw error;
+        setError(error.message);
+        return;
       }
 
       setEmailSent(true);
       setMessage('重置密码邮件已发送，请检查您的邮箱');
     } catch (error: unknown) {
-      setError((error as Error).message || '发送重置邮件失败，请重试');
+      setError('发送重置邮件失败，请重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setError(null);
+    setMessage(null);
+    setLoading(true);
+
+    try {
+      const { error } = await sendPasswordResetEmail(email);
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      setMessage('重置密码邮件已重新发送');
+    } catch (error: unknown) {
+      setError('重新发送邮件失败，请重试');
     } finally {
       setLoading(false);
     }

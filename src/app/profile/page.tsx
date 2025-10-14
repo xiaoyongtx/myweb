@@ -1,436 +1,282 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/contexts/UserContext';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
-import Link from 'next/link';
-import Image from 'next/image';
+
+interface Profile {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  website: string | null;
+  updated_at: string;
+}
 
 export default function ProfilePage() {
-  const { user, profile, refreshProfile, loading } = useUser();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState('profile');
+  const { user, loading } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // 表单状态
   const [username, setUsername] = useState('');
-  const [updating, setUpdating] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fullName, setFullName] = useState('');
+  const [website, setWebsite] = useState('');
 
-  // 如果用户未登录，重定向到登录页面
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/login');
+    if (user) {
+      getProfile();
     }
-  }, [user, loading, router]);
+  }, [user]);
 
-  // 加载用户资料
-  useEffect(() => {
-    if (profile) {
-      setUsername(profile.username || '');
-      if (profile.avatar_url) {
-        setAvatarPreview(profile.avatar_url);
-      }
-    }
-  }, [profile]);
-
-  // 处理头像选择
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // 触发文件选择对话框
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
-
-  // 更新个人资料
-  const updateProfile = async () => {
-    if (!user) return;
-    
-    setUpdating(true);
-    setMessage({ type: '', text: '' });
-    
+  const getProfile = async () => {
     try {
-      // 更新用户名
-      const { error: profileError } = await supabase
+      setProfileLoading(true);
+      const { data, error } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          username,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'id' });
-      
-      if (profileError) throw profileError;
-      
-      // 如果有新头像，上传并更新
-      if (avatarFile) {
-        const fileExt = avatarFile.name.split('.').pop();
-        const filePath = `avatars/${user.id}.${fileExt}`;
-        
-        // 上传头像
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(filePath, avatarFile, { upsert: true });
-        
-        if (uploadError) throw uploadError;
-        
-        // 获取头像公共URL
-        const { data: publicUrlData } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath);
-        
-        // 更新用户头像URL
-        const { error: avatarError } = await supabase
-          .from('profiles')
-          .update({ avatar_url: publicUrlData.publicUrl })
-          .eq('id', user.id);
-        
-        if (avatarError) throw avatarError;
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
       }
-      
-      await refreshProfile();
-      setMessage({ type: 'success', text: '个人资料已更新' });
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      setMessage({ type: 'error', text: '更新个人资料失败，请重试' });
+
+      if (data) {
+        setProfile(data);
+        setUsername(data.username || '');
+        setFullName(data.full_name || '');
+        setWebsite(data.website || '');
+      }
+    } catch (error: any) {
+      console.error('获取用户资料失败:', error);
+      setError('获取用户资料失败');
     } finally {
-      setUpdating(false);
+      setProfileLoading(false);
     }
   };
 
-  // 更新密码
-  const updatePassword = async () => {
+  const updateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!user) return;
-    
-    // 验证新密码
-    if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: '两次输入的新密码不一致' });
-      return;
-    }
-    
-    if (newPassword.length < 6) {
-      setMessage({ type: 'error', text: '密码长度至少为6个字符' });
-      return;
-    }
-    
-    setUpdating(true);
-    setMessage({ type: '', text: '' });
-    
+
     try {
-      // 更新密码
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-      
-      if (error) throw error;
-      
-      setNewPassword('');
-      setConfirmPassword('');
-      setMessage({ type: 'success', text: '密码已更新' });
-    } catch (error) {
-      console.error('Error updating password:', error);
-      setMessage({ type: 'error', text: '更新密码失败，请重试' });
+      setSaving(true);
+      setError(null);
+      setMessage(null);
+
+      const updates = {
+        id: user.id,
+        username,
+        full_name: fullName,
+        website,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase
+        .from('profiles')
+        .upsert(updates);
+
+      if (error) {
+        throw error;
+      }
+
+      setMessage('个人资料更新成功！');
+      await getProfile(); // 重新获取资料
+    } catch (error: any) {
+      console.error('更新用户资料失败:', error);
+      setError('更新用户资料失败: ' + error.message);
     } finally {
-      setUpdating(false);
+      setSaving(false);
     }
   };
 
-  // 如果正在加载，显示加载状态
-  if (loading) {
+  if (loading || profileLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-          <p className="text-gray-500 dark:text-gray-400">加载中...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">加载中...</p>
         </div>
       </div>
     );
   }
-  
-  // 如果用户未登录，显示提示
+
   if (!user) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">未登录</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">您需要登录才能访问个人资料页面</p>
-          <Link
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            需要登录
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            请先登录以访问个人资料页面
+          </p>
+          <a
             href="/auth/login"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             前往登录
-          </Link>
-        </div>
-      </div>
-    );
-  }
-  
-  // 如果用户已登录但没有个人资料，需要创建个人资料
-  if (user && !profile) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">需要创建个人资料</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            您已成功登录，但尚未创建个人资料。请选择以下方式之一创建个人资料。
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link
-              href="/admin/manual-setup"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-            >
-              简易设置（推荐）
-            </Link>
-            <Link
-              href="/admin/init-db"
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-            >
-              标准设置
-            </Link>
-          </div>
+          </a>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <Link
-          href="/"
-          className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-        >
-          ← 返回首页
-        </Link>
-      </div>
-
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-          个人资料
-        </h1>
-        <p className="mt-3 text-xl text-gray-500 dark:text-gray-400">
-          管理您的账户信息和设置
-        </p>
-      </div>
-
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg">
-          {/* 标签导航 */}
-          <div className="border-b border-gray-200 dark:border-gray-700">
-            <nav className="flex -mb-px">
-              <button
-                onClick={() => setActiveTab('profile')}
-                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
-                  activeTab === 'profile'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                }`}
-              >
-                基本信息
-              </button>
-              <button
-                onClick={() => setActiveTab('password')}
-                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
-                  activeTab === 'password'
-                    ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                }`}
-              >
-                修改密码
-              </button>
-            </nav>
-          </div>
-
-          {/* 消息提示 */}
-          {message.text && (
-            <div
-              className={`p-4 ${
-                message.type === 'success'
-                  ? 'bg-green-50 text-green-800 dark:bg-green-900 dark:text-green-100'
-                  : 'bg-red-50 text-red-800 dark:bg-red-900 dark:text-red-100'
-              }`}
-            >
-              {message.text}
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">个人资料</h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                管理您的个人信息和账户设置
+              </p>
             </div>
-          )}
 
-          {/* 基本信息表单 */}
-          {activeTab === 'profile' && (
-            <div className="p-6">
-              <div className="flex flex-col items-center mb-6">
-                <div className="relative">
-                  <div
-                    className="h-24 w-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center"
-                    onClick={triggerFileInput}
-                  >
-                    {avatarPreview ? (
-                      <Image
-                        src={avatarPreview}
-                        alt="头像预览"
-                        className="h-full w-full object-cover"
-                        width={96}
-                        height={96}
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="text-3xl font-bold text-gray-400 dark:text-gray-500">
-                        {user.email?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={triggerFileInput}
-                    className="absolute bottom-0 right-0 bg-indigo-600 text-white rounded-full p-2 shadow-md hover:bg-indigo-700"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleAvatarChange}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </div>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  点击头像更换
-                </p>
-              </div>
-
-              <div className="space-y-6">
+            {/* 账户信息 */}
+            <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">账户信息</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    电子邮箱
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    邮箱地址
                   </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={user.email || ''}
-                    disabled
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400"
-                  />
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    邮箱地址不可更改
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">{user.email}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    邮箱验证状态
+                  </label>
+                  <p className="mt-1 text-sm">
+                    {user.email_confirmed_at ? (
+                      <span className="text-green-600 dark:text-green-400">✓ 已验证</span>
+                    ) : (
+                      <span className="text-red-600 dark:text-red-400">✗ 未验证</span>
+                    )}
                   </p>
                 </div>
-
                 <div>
-                  <label
-                    htmlFor="username"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    用户名
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    注册时间
                   </label>
-                  <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-                    placeholder="请输入您的用户名"
-                  />
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString('zh-CN') : '未知'}
+                  </p>
                 </div>
-
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={updateProfile}
-                    disabled={updating}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {updating ? '保存中...' : '保存更改'}
-                  </button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    最后登录
+                  </label>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('zh-CN') : '未知'}
+                  </p>
                 </div>
               </div>
             </div>
-          )}
 
-          {/* 修改密码表单 */}
-          {activeTab === 'password' && (
-            <div className="p-6">
-              <div className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="new-password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    新密码
-                  </label>
-                  <input
-                    type="password"
-                    id="new-password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-                    placeholder="请输入新密码"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="confirm-password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    确认新密码
-                  </label>
-                  <input
-                    type="password"
-                    id="confirm-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-                    placeholder="请再次输入新密码"
-                  />
-                </div>
-
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={updatePassword}
-                    disabled={updating}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {updating ? '更新中...' : '更新密码'}
-                  </button>
-                </div>
+            {/* 个人资料表单 */}
+            <form onSubmit={updateProfile} className="space-y-6">
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  用户名
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  placeholder="请输入用户名"
+                />
               </div>
-            </div>
-          )}
+
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  全名
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  placeholder="请输入全名"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  个人网站
+                </label>
+                <input
+                  type="url"
+                  id="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  placeholder="https://example.com"
+                />
+              </div>
+
+              {error && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {message && (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-green-800 dark:text-green-200">{message}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsername(profile?.username || '');
+                    setFullName(profile?.full_name || '');
+                    setWebsite(profile?.website || '');
+                    setError(null);
+                    setMessage(null);
+                  }}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  重置
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {saving ? '保存中...' : '保存更改'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

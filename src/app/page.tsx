@@ -150,19 +150,16 @@ export default function Home() {
                   </h3>
                   <div className="text-gray-600 dark:text-gray-300 leading-relaxed space-y-4 text-lg">
                     <p>
-                      我是小勇同学，老家江西，现居郑州。
+                      我是小勇同学，90后奶爸，资深程序员。
                     </p>
                     <p>
-                      90后奶爸，资深程序员。在国企上班，下班搞副业。
-                    </p>
-                    <p>
-                      2025年开启副业，做过很多实战项目，闲鱼变现四位数。
+                      2025年3月开启副业，闲鱼变现四位数。
                     </p>
                     <p>
                       深圳大冲私教学员，践行十年退休计划。
                     </p>
                     <p>
-                      坚持日更公众号，分享一人企业复利商业化心得。
+                      AI编程和智能体项目教练，深耕AI领域。
                     </p>
                   </div>
                 </div>
@@ -178,17 +175,17 @@ export default function Home() {
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">
                     <span className="font-medium text-gray-900 dark:text-white">核心业务：</span>
-                    公众号 + 闲鱼 + AI编程
+                    AI编程 + AI智能体
                   </p>
                   <div className="flex flex-wrap gap-3 mb-8">
                     <span className="px-5 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 dark:from-indigo-900 dark:to-purple-900 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-700">
-                      📝 公众号日更
+                      🤖 AI编程
                     </span>
                     <span className="px-5 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 dark:from-green-900 dark:to-emerald-900 dark:text-green-200 border border-green-200 dark:border-green-700">
-                      🛒 闲鱼电商
+                      🧠 AI智能体
                     </span>
                     <span className="px-5 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 dark:from-purple-900 dark:to-pink-900 dark:text-purple-200 border border-purple-200 dark:border-purple-700">
-                      🤖 AI编程
+                      💻 资深程序员
                     </span>
                   </div>
                 </div>

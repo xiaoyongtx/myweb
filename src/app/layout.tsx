@@ -5,6 +5,7 @@ import "./globals.css";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
 import { UserProvider } from "@/contexts/UserContext";
+import { AuthProvider } from "@/components/AuthProvider";
 import { Toaster } from 'react-hot-toast';
 import { seoConfig } from "@/lib/seo";
 
@@ -107,19 +108,28 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="format-detection" content="telephone=no" />
+        
+        {/* Google广告 */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6011997712552189"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
         suppressHydrationWarning={true}
       >
-        <UserProvider>
-          <NavbarWrapper />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-          <Toaster position="top-right" />
-        </UserProvider>
+        <AuthProvider>
+          <UserProvider>
+            <NavbarWrapper />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+            <Toaster position="top-right" />
+          </UserProvider>
+        </AuthProvider>
       </body>
     </html>
   );

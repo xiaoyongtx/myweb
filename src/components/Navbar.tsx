@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@/contexts/UserContext';
+import { UserMenu } from './UserMenu';
 import LogoutButton from './LogoutButton';
 
 const Navbar = () => {
@@ -101,62 +102,7 @@ const Navbar = () => {
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            {user ? (
-              <div className="relative" ref={profileMenuRef}>
-                <button
-                  onClick={toggleProfileMenu}
-                  className="flex items-center focus:outline-none"
-                  aria-expanded={isProfileMenuOpen}
-                  aria-haspopup="true"
-                >
-                  <span className="sr-only">打开用户菜单</span>
-                  {getAvatarUrl() ? (
-                    <Image
-                      src={getAvatarUrl()!}
-                      alt="用户头像"
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 rounded-full object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
-                      {getInitial()}
-                    </div>
-                  )}
-                </button>
-
-                {isProfileMenuOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
-                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {user.email}
-                      </p>
-                    </div>
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsProfileMenuOpen(false)}
-                    >
-                      个人资料
-                    </Link>
-                    <LogoutButton
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 bg-transparent"
-                      onLogout={() => setIsProfileMenuOpen(false)}
-                    >
-                      退出登录
-                    </LogoutButton>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-              >
-                登录
-              </Link>
-            )}
+            <UserMenu />
           </div>
           <div className="-mr-2 flex items-center sm:hidden">
             <button
@@ -218,28 +164,9 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            {user ? (
-              <>
-                <Link
-                  href="/profile"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white text-base font-medium"
-                >
-                  个人资料
-                </Link>
-                <LogoutButton
-                  className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white text-base font-medium bg-transparent"
-                >
-                  退出登录
-                </LogoutButton>
-              </>
-            ) : (
-              <Link
-                href="/auth/login"
-                className="block w-full text-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 mx-2 my-2"
-              >
-                登录
-              </Link>
-            )}
+            <div className="px-3 py-2">
+              <UserMenu />
+            </div>
           </div>
         </div>
       )}
