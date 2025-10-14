@@ -5,12 +5,12 @@ import WaveSurfer from "wavesurfer.js";
 
 // 声明 SpeechRecognition API 的类型，以兼容不同浏览器
 const SpeechRecognition =
-  (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  typeof window !== 'undefined' ? ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) : null;
 
 // 模拟一个将文本转换为语音并返回音频Blob的函数
 const textToSpeech = (text: string, lang: string): Promise<Blob> => {
   return new Promise((resolve, reject) => {
-    if (!window.speechSynthesis) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
       return reject("浏览器不支持语音合成。");
     }
     const utterance = new SpeechSynthesisUtterance(text);

@@ -25,12 +25,10 @@ export function UserMenu() {
 
   const handleSignOut = async () => {
     try {
-      const success = await signOut();
+      await signOut();
       setIsOpen(false);
-      if (success) {
-        // 重定向到首页
-        window.location.href = '/';
-      }
+      // 重定向到首页
+      window.location.href = '/';
     } catch (error) {
       console.error('登出失败:', error);
     }
